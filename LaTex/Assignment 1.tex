@@ -1,0 +1,241 @@
+\documentclass{article}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{dirtytalk}
+\usepackage{pgfplotstable} 
+\usepackage{pgfplots}
+\usepackage{datatool}
+\usepackage{siunitx}
+\usepackage[hyphens]{url}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{float}
+\usepackage[style=ieee]{biblatex}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage[normalem]{ulem}
+\useunder{\uline}{\ul}{}
+
+\addbibresource{main.bib}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=blue,      
+    urlcolor=blue,
+    citecolor=blue,
+}
+
+\pgfplotsset{compat=1.18}
+
+\title{\textbf{Parallel and Distributed Computing\\DD2443 - Pardis24\\Exercises for Lecture 1}}
+\author{Name: Casper Kristiansson}
+\date{\today}
+
+\begin{document}
+
+\setlength\parindent{0pt}
+\setlength{\parskip}{\bigskipamount}
+
+\maketitle
+
+\section*{Exercise 1}
+\subsection*{Question}
+\textbf{\textit{Safety and Liveness Properties) HSLS Exercise 1.2}}
+
+\textbf{For each of the following, state whether it is a safety or liveness property. Identify the bad or good thing of interest.}
+
+\begin{enumerate}
+    \item \textbf{Patrons are served in the order they arrive.}
+    \item \textbf{Anything that can go wrong, will go wrong.}
+    \item \textbf{No one wants to die.}
+    \item \textbf{Two things are certain: death and taxes.}
+    \item \textbf{As soon as one is born, one dies.}
+    \item \textbf{If an interrupt occurs, a message is printed within one second.}
+    \item \textbf{If an interrupt occurs, a message is printed.}
+    \item \textbf{I will finish what Darth Vader has started.}
+    \item \textbf{The cost of living never decreases.}
+    \item \textbf{You can always tell a Harvard man.}
+\end{enumerate}
+
+
+\subsection*{Answer}
+The safety property and liveness property can be described in short as:
+
+\begin{itemize}
+    \item Safety Property: This defines that something bad will never happen.
+    \item Liveness Property: Something good will happen.
+\end{itemize}
+
+\begin{enumerate}
+    \item Patrons are served in the order they arrive.
+    \begin{itemize}
+        \item Type: Safety Property
+        \item Reason: This property will make sure that patrons are not served in the wrong order meaning that nothing bad will ever happen.
+    \end{itemize}
+
+    \item Anything that can go wrong, will go wrong.
+    \begin{itemize}
+        \item Type: Liveness Property
+        \item Reason: The statement is about how something going wrong can always happen but something good will eventually come out of it.
+    \end{itemize}
+
+    \item No one wants to die.
+    \begin{itemize}
+        \item Type: Liveness Property
+        \item Reason: This states that there is something good to look forward to.
+    \end{itemize}
+
+    \item Two things are certain: death and taxes.
+    \begin{itemize}
+        \item Type: Liveness Property
+        \item Reason: This states that two things are certain in life and that is death and taxes, but the point is to look forward to other things which might not be certain but it will eventually happen.
+    \end{itemize}
+
+    \item As soon as one is born, one starts dying.
+    \begin{itemize}
+        \item Type: Liveness Property
+        \item Reason: A progress towards death is started as soon as one is born. This is liveness working towards the state of life cicle.
+    \end{itemize}
+
+    \item If an interrupt occurs, then a message is printed within one second.
+    \begin{itemize}
+        \item Type: Safety Property
+        \item Reason: This statement is safety due to making sure that there is a delay before a message is printed in an interruption occurs to make sure that it is delivered.
+    \end{itemize}
+
+    \item If an interrupt occurs, then a message is printed.
+    \begin{itemize}
+        \item Type: Liveness Property
+        \item Reason: This can be seen as a good thing that a message is printed right after a interruption has occured.
+    \end{itemize}
+
+    \item I will finish what Darth Vader has started.
+    \begin{itemize}
+        \item Type: Liveness Property
+        \item Reason: This statement can be seen as something good can come out after achieving a certain goal.
+    \end{itemize}
+
+    \item The cost of living never decreases.
+    \begin{itemize}
+        \item Type: Safety Property
+        \item Reason: This make sure that the cost of living never decreases where a decrease can be seen as something bad.
+    \end{itemize}
+
+    \item You can always tell a Harvard man.
+    \begin{itemize}
+        \item Type: Liveness Property
+        \item Reason: The entire line is "You can always tell a Harvard man, but you can't tell him much." where identifying a hardvard man can be seen as something good.
+    \end{itemize}
+\end{enumerate}
+
+
+\section*{Exercise 2}
+
+\subsection*{Question}
+\textbf{Use Amdahl’s law to answer the following questions:}
+
+\textbf{A) Suppose the sequential part of a program accounts for 40\% of the program’s execution time on a uniprocessor (single core). Find a limit for the overall speedup that can be achieved by running the program on a multiprocessor machine.}
+
+\textbf{B) Now Supposes the sequential part accounts for 30\% of the program’s computation time. Let sn be the program’s speedup on n processes, assuming the rest of the program is perfectly parallelizable. Your boss tells you to double this speedup: the revised program should have speedup \(s'n > 2sn\). You advertise for a programmer to replace the sequential part with an improved version that runs k times faster. What value of k should you require?}
+
+\textbf{C) Suppose the sequential part can be sped up three-fold, and when we do so, the modified program takes half the time of the original on n processors. What fraction of the overall execution time did the sequential part account for? Express your answer as a function of n.}
+
+\subsection*{Answer}
+
+\subsubsection*{A.}
+Amdahl's law says that the maximum speedup can be stated as:
+
+\[
+S = \frac{1}{1 - p + \frac{p}{n}}
+\]
+
+We want to find the overall speedup that can be achieved by running the program on a multiprocessor machine. This means that the processors can be seen as approaching infinity meaning we have that \(\frac{p}{\infty} = 0\). This means that we have:
+
+\[
+S = \frac{1}{1 - p} = \frac{1}{1 - (1-0.4)} = \frac{1}{0.4} = 2.5.
+\]
+
+\subsubsection*{B.}
+For the given problem we know that we have:
+
+\[
+s_n = \frac{1}{0.3 + \frac{0.7}{n}}
+\]
+
+
+What we want to achieve is that \(s'_n > 2s_n\). The goal is the sequential part is that it suppose to run k times faster, which means that we have:
+
+\[
+s'_n = \frac{1}{\frac{0.3}{n} + \frac{0.7}{n}}
+\]
+
+This can then be combined into, which in our case we want to solve for k: 
+
+\[
+\frac{1}{\frac{0.3}{k} + \frac{0.7}{n}} > 2 \left( \frac{1}{0.3 + \frac{0.7}{n}} \right)
+\]
+
+\begin{align*}
+    \left( \frac{0.3}{k} + \frac{0.7}{n} \right) &< \frac{0.3 + \frac{0.7}{n}}{2} \\
+    2 \left( \frac{0.3}{k} + \frac{0.7}{n} \right) &< 0.3 + \frac{0.7}{n} \\
+    \frac{0.6}{k} + \frac{1.4}{n} &< 0.3 + \frac{0.7}{n} \\
+    \frac{0.6}{k} &< 0.3 + \frac{0.7}{n} \\
+    k &> \frac{0.6}{0.3 + \frac{0.7}{n}}
+\end{align*}
+
+This means that when k goes towards infinity k becomes 2.
+
+
+\subsubsection*{C.}
+From this problem we know that the sequential part of the program is sped up three-fold and because of it the modified program takes half the time of the original on n processors. This means that we can express the original execution time for the sequential part as x. This means that we have:
+
+
+\[
+s_n = \frac{1}{x + \frac{1 - x}{n}}
+\]
+
+And the modified program as:
+
+\[
+s'_n = \frac{1}{\frac{x}{3} + \frac{1 - x}{n}}
+\]
+
+This means that we have:
+
+\[
+2 \times \frac{1}{x + \frac{1 - x}{n}} = \frac{1}{\frac{x}{3} + \frac{1 - x}{n}}
+\]
+
+\begin{align*}
+    x + \frac{1 - x}{n} &= 2 \left( \frac{x}{3} + \frac{1 - x}{n} \right) \\
+    x + \frac{1 - x}{n} &= \frac{2x}{3} + \frac{2(1 - x)}{n} \\
+    x - \frac{2x}{3} &= \frac{2 - 2x - (1 - x)}{n} \\
+    \frac{x}{3} &= \frac{1 - x}{n} \\
+    x &= \frac{3 - 3x}{n} \\
+\end{align*}
+
+
+\section*{Exercise 3}
+\subsection*{Question}
+\textbf{\textit{(Amdahl) HSLS Exercise 1.9}}
+
+\textbf{You have a choice between buying one uniprocessor that executes five zillion instructions per second or a 10-processor multiprocessor where each processor executes one zillion instructions per second. Using Amdahl’s law, explain how you would decide which to buy for a particular application.}
+
+\subsection*{Answer}
+Amdahl's law says that the maximum speedup can be stated as:
+
+\[
+S = \frac{1}{1 - p + \frac{p}{n}}
+\]
+
+From this, we can see that to decide whether to buy a uniprocessor that executes five zillion instructions per second or a 10-processor multiprocessor we need to understand how this affects the execution time. We know that if P=0 the execution is sequential which means that the single processor would perform faster. If P is close to 1 it would be fully parallelizable it would be able to execute a lot more with the 10 processors.
+
+So deciding if we should buy a uniprocessor or 10-processor multiprocessor can be determined by how good the execution can be parallezable. If the P is relatively small the uniprocessor will perform better and if P is big then buying the 10-processor multiprocessor is a better choice.
+
+
+\newpage
+\printbibliography
+
+\end{document}

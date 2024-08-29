@@ -1,0 +1,88 @@
+\documentclass{article}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{dirtytalk}
+\usepackage{pgfplotstable} 
+\usepackage{pgfplots}
+\usepackage{datatool}
+\usepackage{siunitx}
+\usepackage[hyphens]{url}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{float}
+\usepackage[style=ieee]{biblatex}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage[normalem]{ulem}
+\useunder{\uline}{\ul}{}
+
+\addbibresource{main.bib}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=blue,      
+    urlcolor=blue,
+    citecolor=blue,
+}
+
+\pgfplotsset{compat=1.18}
+
+\title{\textbf{Parallel and Distributed Computing\\DD2443 - Pardis24\\Exercises for Lecture 2}}
+\author{Name: Casper Kristiansson}
+\date{\today}
+
+\begin{document}
+
+\setlength\parindent{0pt}
+\setlength{\parskip}{\bigskipamount}
+
+\maketitle
+
+\section*{Exercise 1}
+\subsection*{Question}
+\textbf{Consider the class \texttt{VolatileCounters} in Figure 1. The ``volatile'' declaration ensures that variable reads and writes occur in a one-at-a-time sequential order (as one might expect) when accessed by each of the parallel threads. Assume \texttt{actor1} and \texttt{actor2} are invoked to run in parallel.}
+
+\begin{enumerate}
+    \item \textbf{What are the relevant events?}
+    \item \textbf{Sketch the state machine graph (only parts, it is quite large). Include all events you have identified in 1.}
+    \item \textbf{Sketch a few traces of the state machine.}
+    \item \textbf{List the relevant intervals for the program.}
+    \item \textbf{Which are the possible final values for \texttt{x}? Explain your reasoning very carefully.}
+\end{enumerate}
+
+\textbf{Note that this is more subtle than it looks. Are you sure that you have the right solution?}
+
+\subsection*{Answer}
+
+
+
+\section*{Exercise 2}
+\subsection*{Question}
+\textit{\textbf{HSLS Exercise 2.3 (Flaky Computer Corporation) Use the method presented in class and in the textbook to solve this.}}
+
+\textbf{Programmers at the Flaky Computer Corporation designed the protocol shown in Fig. 2.16 to achieve \textit{n}-thread mutual exclusion. For each question, either sketch a proof or display an execution where it fails.}
+
+\begin{itemize}
+    \item \textbf{Does this protocol satisfy mutual exclusion?}
+    \item \textbf{Is this protocol starvation-free?}
+    \item \textbf{Is this protocol deadlock-free?}
+    \item \textbf{Is this protocol livelock-free?}
+\end{itemize}
+
+\subsection*{Answer}
+
+
+\section*{Exercise 3}
+\subsection*{Question}
+\textbf{\textit{HSLS Exercise 2.8 (Fast path lock) Use the method presented in class and in the textbook to solve this.}}
+
+\textbf{In practice, almost all lock acquisitions are uncontended, so the most practical measure of a lock’s performance is the number of steps needed for a thread to acquire a lock when no other thread is concurrently trying to acquire the lock. Scientists at Cantaloupe-Melon University have devised the following “wrapper” for an arbitrary lock, shown in Fig. 2.18. They claim that if the base \texttt{Lock} class provides mutual exclusion and is starvation-free, so does the \texttt{FastPath} lock, but it can be acquired in a constant number of steps in the absence of contention. Sketch an argument why they are right, or give a counterexample.}
+
+\subsection*{Answer}
+
+\newpage
+\printbibliography
+
+\end{document}
