@@ -4,7 +4,7 @@ public class MainA {
 
     public static class Incrementer implements Runnable {
         public void run() {
-			// Increment the counter 1,000,000 times
+			// Increment the counter 1000000 times
             for (int i = 0; i < 1000000; i++) {
                 counter++;
             }
@@ -30,6 +30,6 @@ public class MainA {
             }
         }
 
-        System.out.println("Final value of counter: " + counter);
+        System.out.println("Counter value: " + counter);
     }
 }
