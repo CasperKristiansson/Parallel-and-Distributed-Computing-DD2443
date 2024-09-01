@@ -23,7 +23,7 @@ public class Buffer {
 
 	// Add an element to the buffer
     public void add(int i) {
-		// Aquire the lock
+		// Acquire the lock
         lock.lock();
         try {
 			// Wait until the buffer is not full
@@ -48,7 +48,7 @@ public class Buffer {
     }
 
     public int remove() {
-		// Aquire the lock
+		// Acquire the lock
         lock.lock();
         try {
 			// Wait until the buffer is not empty
@@ -72,7 +72,7 @@ public class Buffer {
     }
 
     public void close() {
-		// Aquire the lock
+		// Acquire the lock
         lock.lock();
         try {
             if (isClosed) {
