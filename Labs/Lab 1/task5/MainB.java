@@ -36,12 +36,12 @@ public class MainB {
         }
 
         private void eat() throws InterruptedException {
-            leftChopstick.lock();
             try {
+                leftChopstick.lock();
                 System.out.println(philosopherNumber + ": picked up left chopstick.");
-                rightChopstick.lock();
                 try {
                     System.out.println(philosopherNumber + ": picked up right chopstick.");
+                    rightChopstick.lock();
                     System.out.println(philosopherNumber + ": eating.");
                     Thread.sleep((int) (Math.random() * 20));
                 } finally {
