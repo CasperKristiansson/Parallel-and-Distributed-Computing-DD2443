@@ -19,7 +19,7 @@ public class MainB {
         public void run() {
             try {
                 while (true) {
-                    // We use semaphorse with resources as number of philosophers - 1. This means that
+                    // We use semaphores with resources as number of philosophers - 1. This means that
                     // at most n - 1 philosophers can eat at the same time. This prevents deadlock because
                     // if all philosophers pick up their left chopstick at the same time, only n - 1 of them
                     // will be able to pick up the right chopstick and eat.
