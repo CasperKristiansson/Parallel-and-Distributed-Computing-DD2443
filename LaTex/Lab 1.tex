@@ -110,7 +110,7 @@ We began by creating a shared, volatile counter variable that multiple threads c
 In the \texttt{main} method, we created and started four threads to run the incrementing task simultaneously. After all threads completed their execution, we printed the final value of the counter.
 
 \subsubsection{Discussion}
-When running this program we can see that we get the output: \say{\textit{Counter value: 1091182}}, note that this value differs every time. This is substantially less than the expected value which should be 4,000,000. The reasoning behind this is due to the nature of both just using the volatile keyword and the fundamentals of how the different threads will read the value of the shared counter. The volatile keyword ensures that each thread can read the latest value of the shared value but its operation is not atomic. This means it will first read the value, increment the value, and then write. Doing this will mean that a lot of the operations will be ignored and increments operations will be lost. As in the title, this is what we call a raise condition.
+When running this program we can see that we get the output: \say{\texttt{Counter value: 1091182}}, note that this value differs every time. This is substantially less than the expected value which should be 4,000,000. The reason for this result can be attributed to the nature of both just using the volatile keyword and the fundamentals of how the different threads will read the value of the shared counter. The volatile keyword ensures that each thread can read the latest value of the shared value but its operation is not atomic. This means it will first read the value, increment the value, and then write. Doing this will mean that a lot of the operations will be ignored and increments operations will be lost. As in the title, this is what we call a race condition.
 
 
 \subsection{Synchronized keyword}
@@ -132,23 +132,11 @@ We re-used the code from the previous task but modified it by introducing the \t
 In the \texttt{main} method, we once again created and started four threads to run the incrementing task concurrently. After all threads completed their execution, we measured the execution time and printed the final counter value.
 
 \subsubsection{Discussion}
-When running this program we can see that we get the output: "\textit{Counter Value: 4000000
-Time: 211451375 ns}". Using this strategy with the synchronized keyword we can make sure that the result of the shared counter value to always be 4000000. Utilizing the synchronized keyword prevents the race condition from overwriting certain increment operations which we saw happening in the previous task.
+When running this program we can see that we get the output: \say{\texttt{Counter Value: 4000000
+Time: 211451375 ns}}. By using this strategy with the synchronized keyword we can make sure that the result of the shared counter value to always be 4,000,000. Utilizing the synchronized keyword prevents the race condition from overwriting certain increment operations which we saw happening in the previous task.
 
 
 
-
-
-%
-%
-% Missing:
-% - Run on PDC
-% - Graph comparing PDC with local, see chatgpt chat with graph generated for lcoal
-%
-%
-%
-%
-%
 \subsection{Synchronization performance}
 \textbf{Source files:}
 
@@ -178,19 +166,73 @@ This allowed us to assess both the consistency and performance overhead introduc
 We then executed the program on PDC, for the same range of threads, to get a result we could compare with the results of our local machine.
 
 
-\subsubsection{Discussion}
+\subsubsection{Result}
 As the number of threads increases, we observe a significant rise in execution time. For instance, the average time with 1 thread is about 2.29 milliseconds, but with 64 threads, it reaches over 532 milliseconds. This is due to the overhead of the \texttt{synchronized} keyword, which forces threads to wait their turn to increment the counter.
 
-The standard deviation also increases with more threads, which indicates a greater variability in execution times. This variability stems from the increased contention among threads.
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Threads} & \textbf{Average Time (ns)} & \textbf{Standard Deviation (ns)} \\
+\hline
+1   & 2,227,666.7     & 28,849.36         \\
+2   & 21,996,996.05   & 877,982.09        \\
+4   & 34,643,375.05   & 2,115,645.74      \\
+8   & 69,924,668.7    & 8,190,083.8       \\
+16  & 131,321,616.6   & 3,794,384.82      \\
+32  & 262,143,381.25  & 15,229,219.75     \\
+64  & 508,303,397.9   & 15,938,126.61     \\
+\hline
+\end{tabular}
+\caption{Local Machine (MacBook Pro M1) Results}
+\end{table}
 
-When running these experiments on the PDC system to compare performance and variability across different environments, we found that...
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Threads} & \textbf{Average Time (ns)} & \textbf{Standard Deviation (ns)} \\
+\hline
+1   & 2,723,026.15    & 148,999.88         \\
+2   & 35,170,916.9    & 1,150,519.76       \\
+4   & 91,405,393.9    & 12,584,853.82      \\
+8   & 244,587,758.45  & 50,243,364.12      \\
+16  & 467,120,508.05  & 117,124,377.22     \\
+32  & 994,722,323.6   & 146,300,986.62     \\
+64  & 2,249,634,642.4 & 329,908,076.21     \\
+\hline
+\end{tabular}
+\caption{PDC Results}
+\end{table}
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{LaTex/images/Execution Time vs Number of Threads with Standard Deviation (X = 10, Y = 20).png}
     \caption{Execution Time vs Number of Threads with Standard Deviation}
     \label{fig:1.31}
 \end{figure}
+
+\subsubsection{Difference in Performance}
+
+\textbf{Single-Thread Performance:} 
+  
+  The MacBook Pro M1 is slightly faster with 2,227,666.7 ns compared to the PDC's 2,723,026.15 ns. This is expected as a desktop CPU can often have lower latency for single-threaded operations.
+
+\textbf{Multi-Thread Performance:} 
+
+ As the number of threads increases, the average execution time grows more rapidly on the PDC than on the local MacBook. For example, with 64 threads, the average time on the PDC is approximately 2.25 billion ns, while it is around 508 million ns on the MacBook.
+  
+  The PDC shows a significantly larger increase in time and standard deviation with more threads, indicating a higher synchronization overhead.
+
+\subsubsection{Discussion}
+
+- \textbf{System Architecture Differences:}
+  - \textbf{MacBook Pro M1:} Uses an ARM-based architecture optimized for single-threaded performance and power efficiency. It has a high-performance cache hierarchy and is designed for lower power consumption, contributing to faster single-thread performance and relatively consistent multi-threaded performance up to a certain number of threads.
+  - \textbf{PDC (HPE Cray EX):} A high-performance computing system designed for parallel workloads across many CPU cores. The Cray EX system has more complex interconnects and potentially higher overhead for thread synchronization.
+
+- \textbf{Overhead of Synchronization:}
+  - \textbf{MacBook Pro M1:} The lower thread count performance suggests lower synchronization overhead.
+  - \textbf{PDC (HPE Cray EX):} The increasing overhead, as threads increase, is likely due to the distributed nature of the system.
 
 
 

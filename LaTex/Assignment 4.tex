@@ -1,0 +1,118 @@
+\documentclass{article}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{dirtytalk}
+\usepackage{pgfplotstable} 
+\usepackage{pgfplots}
+\usepackage{datatool}
+\usepackage{siunitx}
+\usepackage[hyphens]{url}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{float}
+\usepackage[style=ieee]{biblatex}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage[normalem]{ulem}
+\useunder{\uline}{\ul}{}
+
+\addbibresource{main.bib}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=blue,      
+    urlcolor=blue,
+    citecolor=blue,
+}
+
+\pgfplotsset{compat=1.18}
+
+\title{\textbf{Parallel and Distributed Computing\\DD2443 - Pardis24\\Exercises for Lecture 4}}
+\author{Name: Casper Kristiansson}
+\date{\today}
+
+\begin{document}
+
+\setlength\parindent{0pt}
+\setlength{\parskip}{\bigskipamount}
+
+\maketitle
+
+\section*{Exercise 1}
+\subsection*{Question}
+\textbf{Consider the atomic MRSW construction shown in Fig. 4.12. True or false: If we replace the atomic SRSW registers with regular SRSW registers, then the construction still yields an atomic MRSW register. Justify your answer.}
+
+\subsection*{Answer}
+
+If we replace the atomic SRSW registers with regular SRSW registers, then the constriction will not yield an atomic MRSW register. The reason behind this is that an atomic SRSW register guarantees that every read is reflected on the most recent write that has happened. Using this allows for consistency and correct order of operations on parallel systems.
+
+A regular SRSW register does not provide this type of guarantee. This means that on a regular register, an operation such as read could return an outdated value. The fundamentals of an MRSW register are that all reads and writes need to be consistent. This means that replacing an atomic SRSW register with a regular register would break the consistency and therefore the statement is false.
+
+
+
+\section*{Exercise 2}
+\subsection*{Question}
+\textbf{Give an example of a quiescently consistent register execution that is not regular.}
+
+\subsection*{Answer}
+A quiescent consistency is when a register returns values of a read operation that is in a consistent state. A regular register in this case is a register that on a read operation returns either a value of the most recent write operation or the value of some earlier write operation (due to the lack of constituency).
+
+An example situation of quiescently consistent but not regular register execution could for example happen in the following scenario:
+
+\begin{itemize}
+    \item Register initial state is: 1
+    \item Thread1 Write the value 2 to the register
+    \item Thread2 performs a read operation after thread1 is done writing and therefore reads the value 1
+    \item Thread3 writes the value 3 to the register after thread1's write operation
+    \item Thread4 reads the value 3 from the register
+\end{itemize}
+
+In this scenario, it is quiescently consistent because any more read operations will return the latest value which in this case is 3. The operation is not regular because thread2 reads the value 1 after a write has occurred but no finished.
+
+
+
+
+\section*{Exercise 3}
+\subsection*{Question}
+\textbf{Consider the following implementation of a register in a distributed, message-passing system. There are $n$ processors $P_0, \ldots, P_{n-1}$ arranged in a ring,}
+
+\textbf{where $P_i$ can send messages only to $P_{(i+1) \mod n}$. Messages are delivered in FIFO order along each link. Each processor keeps a copy of the shared register.}
+
+\begin{itemize}
+    \item \textbf{To read the register, the processor reads the copy in its local memory.}
+    \item \textbf{A processor $P_i$ starts a \texttt{write()} call of value $v$ to register $x$, by sending the message ``$P_i$: write $v$ to $x$'' to $P_{(i+1) \mod n}$.}
+    \item \textbf{If $P_i$ receives a message ``$P_j$: write $v$ to $x$,'' for $i \neq j$, then it writes $v$ to its local copy of $x$, and forwards the message to $P_{(i+1) \mod n}$.}
+    \item \textbf{If $P_i$ receives a message ``$P_i$: write $v$ to $x$,'' then it writes $v$ to its local copy of $x$, and discards the message. The \texttt{write()} call is now complete.}
+\end{itemize}
+
+\textbf{Give a short justification or counterexample.}
+
+\textbf{If \texttt{write()} calls never overlap,}
+
+\begin{itemize}
+    \item \textbf{is this register implementation regular?}
+    \item \textbf{is it atomic?}
+\end{itemize}
+
+\textbf{If multiple processors call \texttt{write()},}
+
+\begin{itemize}
+    \item \textbf{is this register implementation safe?}
+\end{itemize}
+
+
+\subsection*{Answer}
+A regular register in this case is a register that on a read operation returns either a value of the most recent write operation or the value of some earlier write operation (due to the lack of constituency). An atomic register is a register where every read and write operation happens instantaneously meaning it is consistent and you will always have access to its latest value. A register is considered safe where every read operation returns the most recent written value but if it is happening at the same time as a write it could return an older value.
+
+For the first situation where the \texttt{Write()} calls never overlap the register implementation can be considered to be regular. The reason behind this is that when the \texttt{Write()} calls never overlap the process will be fully completed before the next one happens. Doing it this way will make sure that the register is consistent and each read will return the most recent value. The action can though not be considered atomic because for it to be considered atomic the write operation has to happen in a single instant. With the current setup, a read might not get the latest write value.
+
+For the second situation where the \texttt{Write()} calls happen at the same time. With this setup, the register is not considered safe with this implementation. The reason for this is that if multiple writes are happening at the same time the processor might receive multiple writes to different parts of it. The issue with this is that when the inner processors might share a value they might be inconsistent. If any read operations happen during this time it will return a wrong value which isn't the most recent. A safe register requires that the latest read should always return the most recent value.
+
+
+
+\newpage
+\printbibliography
+
+\end{document}
