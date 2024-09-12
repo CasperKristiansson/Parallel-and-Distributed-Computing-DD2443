@@ -26,6 +26,7 @@ public class CountingSemaphore {
 		System.out.println(Thread.currentThread().getId() + ": wait count: " + count);
 		// If the counter is less than 0, wait
         while (count < 0) {
+            System.out.println(Thread.currentThread().getId() + ": checking " + count);
             try {
 				// Wait until the semaphore counter is greater than 0
 				System.out.println(Thread.currentThread().getId() + ": waiting");
