@@ -1,4 +1,3 @@
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class MainB {
@@ -7,26 +6,18 @@ public class MainB {
         private final ReentrantLock leftChopstick;
         private final ReentrantLock rightChopstick;
         private final int philosopherNumber;
-        private final Semaphore semaphore;
 
-        public Philosopher(ReentrantLock leftChopstick, ReentrantLock rightChopstick, int philosopherNumber, Semaphore semaphore) {
+        public Philosopher(ReentrantLock leftChopstick, ReentrantLock rightChopstick, int philosopherNumber) {
             this.leftChopstick = leftChopstick;
             this.rightChopstick = rightChopstick;
             this.philosopherNumber = philosopherNumber;
-            this.semaphore = semaphore;
         }
 
         public void run() {
             try {
                 while (true) {
-                    // We use semaphores with resources as number of philosophers - 1. This means that
-                    // at most n - 1 philosophers can eat at the same time. This prevents deadlock because
-                    // if all philosophers pick up their left chopstick at the same time, only n - 1 of them
-                    // will be able to pick up the right chopstick and eat.
                     think();
-                    semaphore.acquire();
                     eat();
-                    semaphore.release();
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -40,39 +31,55 @@ public class MainB {
         }
 
         private void eat() throws InterruptedException {
-            try {
+            if (philosopherNumber % 2 == 0) {
                 leftChopstick.lock();
-                System.out.println(philosopherNumber + ": picked up left chopstick.");
+                try {
+                    System.out.println(philosopherNumber + ": picked up left chopstick.");
+                    rightChopstick.lock();
+                    try {
+                        System.out.println(philosopherNumber + ": picked up right chopstick.");
+                        System.out.println(philosopherNumber + ": eating.");
+                        Thread.sleep((int) (Math.random() * 20));
+                    } finally {
+                        rightChopstick.unlock();
+                    }
+                } finally {
+                    leftChopstick.unlock();
+                }
+            } else {
+                rightChopstick.lock();
                 try {
                     System.out.println(philosopherNumber + ": picked up right chopstick.");
-                    rightChopstick.lock();
-                    System.out.println(philosopherNumber + ": eating.");
-                    Thread.sleep((int) (Math.random() * 20));
+                    leftChopstick.lock();
+                    try {
+                        System.out.println(philosopherNumber + ": picked up left chopstick.");
+                        System.out.println(philosopherNumber + ": eating.");
+                        Thread.sleep((int) (Math.random() * 20));
+                    } finally {
+                        leftChopstick.unlock();
+                    }
                 } finally {
                     rightChopstick.unlock();
-                    System.out.println(philosopherNumber + ": put down right chopstick.");
                 }
-            } finally {
-                leftChopstick.unlock();
-                System.out.println(philosopherNumber + ": put down left chopstick.");
             }
         }
     }
 
     public static void main(String[] args) {
         int numberOfPhilosophers = 15;
-        Semaphore semaphore = new Semaphore(numberOfPhilosophers - 1);
         Thread[] threads = new Thread[numberOfPhilosophers];
         ReentrantLock[] chopsticks = new ReentrantLock[numberOfPhilosophers];
 
+        // Initialize the chopsticks
         for (int i = 0; i < numberOfPhilosophers; i++) {
             chopsticks[i] = new ReentrantLock();
         }
 
+        // Initialize and start the philosophers
         for (int i = 0; i < numberOfPhilosophers; i++) {
             ReentrantLock leftChopstick = chopsticks[i];
             ReentrantLock rightChopstick = chopsticks[(i + 1) % numberOfPhilosophers];
-            threads[i] = new Thread(new Philosopher(leftChopstick, rightChopstick, i, semaphore));
+            threads[i] = new Thread(new Philosopher(leftChopstick, rightChopstick, i));
             threads[i].start();
         }
     }
