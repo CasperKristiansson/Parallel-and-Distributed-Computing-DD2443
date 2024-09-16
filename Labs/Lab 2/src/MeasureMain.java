@@ -3,7 +3,7 @@ public class MeasureMain {
 	public static void main(String[] args) {
 		// overwrite the args if they are not provided
 		if (args.length == 0) {
-			args = new String[] { "Sequential", "1", "1000", "5", "10", "0" };
+			args = new String[] { "Sequential", "1", "1000", "5", "1000", "0" };
 		}
 		// Sorter name
 		String name = args[0];

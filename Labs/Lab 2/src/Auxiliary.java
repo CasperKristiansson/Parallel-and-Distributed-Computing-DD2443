@@ -50,8 +50,17 @@ public class Auxiliary {
 			sorter.sort(arr);
 			long endTime = System.nanoTime();
 			result[i] = endTime - startTime;
+			isSorted(arr);
 		}
 		return result;
+	}
+
+	public static void isSorted(int[] arr) {
+		for (int i = 1; i < arr.length; i++) {
+			if (arr[i - 1] > arr[i]) {
+				throw new RuntimeException("Array is not sorted");
+			}
+		}
 	}
 
 	/**
