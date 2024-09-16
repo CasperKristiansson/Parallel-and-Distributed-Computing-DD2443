@@ -14,7 +14,7 @@ public class CountingSemaphore {
         count++;
 		System.out.println(Thread.currentThread().getId() + ": signal count: " + count);
 		// If the counter is greater than 0, notify one thread
-        if (count <= 0) {
+        if (count > 0) {
 			System.out.println(Thread.currentThread().getId() + ": notifying");
             notify();
         }
@@ -22,10 +22,9 @@ public class CountingSemaphore {
 
     public synchronized void s_wait() {
 		// Decrement the semaphore counter
-        count--;
 		System.out.println(Thread.currentThread().getId() + ": wait count: " + count);
 		// If the counter is less than 0, wait
-        while (count < 0) {
+        while (count <= 0) {
             System.out.println(Thread.currentThread().getId() + ": checking " + count);
             try {
 				// Wait until the semaphore counter is greater than 0
@@ -37,5 +36,7 @@ public class CountingSemaphore {
                 return;
             }
         }
+
+        count--;
     }
 }
