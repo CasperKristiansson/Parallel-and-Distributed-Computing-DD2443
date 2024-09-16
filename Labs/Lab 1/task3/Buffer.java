@@ -26,6 +26,10 @@ public class Buffer {
 		// Acquire the lock
         lock.lock();
         try {
+            if (isClosed) {
+                throw new IllegalStateException("Closed");
+            }
+
 			// Wait until the buffer is not full
             while (buffer.size() == N) {
 				// If the buffer is closed, throw an exception
@@ -51,10 +55,14 @@ public class Buffer {
 		// Acquire the lock
         lock.lock();
         try {
+            if (isClosed) {
+                throw new IllegalStateException("Closed");
+            }
+
 			// Wait until the buffer is not empty
             while (buffer.isEmpty()) {
                 if (isClosed) {
-                    throw new IllegalStateException("Buffer is closed and empty");
+                    throw new IllegalStateException("Closed");
                 }
 				// Wait until the buffer is not empty
                 notEmpty.await();
