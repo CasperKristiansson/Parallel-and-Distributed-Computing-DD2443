@@ -1,57 +1,60 @@
-import java.util.Arrays;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class ExecutorServiceSort implements Sorter {
     public final int threads;
-    private final ExecutorService executorService;
-	private final Queue<Future<?>> futures = new ConcurrentLinkedQueue<>();
+    private ExecutorService executorService;
 
     public ExecutorServiceSort(int threads) {
         this.threads = threads;
-        this.executorService = Executors.newFixedThreadPool(threads);
     }
+
+	public int getThreads() {
+		return threads;
+	}
 
     @Override
-    public void sort(int[] arr) {
-        try {
-            parallelQuickSort(arr, 0, arr.length - 1);
+	public void sort(int[] arr) {
+		this.executorService = Executors.newFixedThreadPool(threads);
+		System.out.println("Starting executor service");
+		parallelQuickSort(arr, 0, arr.length - 1);
+		System.out.println("Shutting down executor service");
 
-            for (Future<?> future : this.futures) {
-                future.get();
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        } finally {
-			executorService.shutdown();
-        }
-    }
+		executorService.shutdown();
+		try {
+			if (!executorService.awaitTermination(800, TimeUnit.MILLISECONDS)) {
+				executorService.shutdownNow();
+			} 
+		} catch (InterruptedException e) {
+			executorService.shutdownNow();
+		}
 
-    @Override
-    public int getThreads() {
-        return threads;
-    }
+		System.out.println("Executor service shut down");
+	}
 
-    private void parallelQuickSort(int[] arr, int low, int high) {
-        if (low < high) {
-            if (high - low <= 500) {
-                sequentialQuickSort(arr, low, high);
-            } else {
-                int partitionIndex = partition(arr, low, high);
+	private void parallelQuickSort(int[] arr, int low, int high) {
+		if (low < high) {
+			if (high - low <= 1000) {
+				sequentialQuickSort(arr, low, high);
+			} else {
+				int partitionIndex = partition(arr, low, high);
 
-                Future<?> future1 = executorService.submit(new Worker(arr, low, partitionIndex - 1));
-                Future<?> future2 = executorService.submit(new Worker(arr, partitionIndex + 1, high));
+				Future<?> future1 = executorService.submit(new Worker(arr, low, partitionIndex - 1));
+				Future<?> future2 = executorService.submit(new Worker(arr, partitionIndex + 1, high));
 
-                this.futures.add(future1);
-                this.futures.add(future2);
-
-            }
-        }
-    }
+				try {
+                    future1.get();
+                    future2.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+			}
+		}
+	}
 
     private void sequentialQuickSort(int[] arr, int low, int high) {
         if (low < high) {

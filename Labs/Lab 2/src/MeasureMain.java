@@ -3,7 +3,7 @@ public class MeasureMain {
 	public static void main(String[] args) {
 		// overwrite the args if they are not provided
 		if (args.length == 0) {
-			args = new String[] { "ExecutorService", "16", "1000", "10", "1", "0" };
+			args = new String[] { "ExecutorService", "64", "10000", "5", "20", "10" };
 		}
 		// Sorter name
 		String name = args[0];
