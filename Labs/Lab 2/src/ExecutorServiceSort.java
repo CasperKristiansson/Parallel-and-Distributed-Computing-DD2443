@@ -3,7 +3,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class ExecutorServiceSort implements Sorter {
     public final int threads;
@@ -20,9 +19,7 @@ public class ExecutorServiceSort implements Sorter {
     @Override
 	public void sort(int[] arr) {
 		this.executorService = Executors.newFixedThreadPool(threads);
-		System.out.println("Starting executor service");
 		parallelQuickSort(arr, 0, arr.length - 1);
-		System.out.println("Shutting down executor service");
 
 		executorService.shutdown();
 		try {
@@ -32,8 +29,6 @@ public class ExecutorServiceSort implements Sorter {
 		} catch (InterruptedException e) {
 			executorService.shutdownNow();
 		}
-
-		System.out.println("Executor service shut down");
 	}
 
 	private void parallelQuickSort(int[] arr, int low, int high) {
