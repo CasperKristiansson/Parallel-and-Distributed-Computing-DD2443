@@ -2,9 +2,9 @@ public class MeasureMain {
 
 	public static void main(String[] args) {
 		// overwrite the args if they are not provided
-		// if (args.length == 0) {
-		// 	args = new String[] { "ParallelStream", "64", "10000", "5", "100", "10" };
-		// }
+		if (args.length == 0) {
+			args = new String[] { "ExecutorService", "96", "1000000", "5", "100", "10" };
+		}
 		// Sorter name
 		String name = args[0];
 		// Number of threads.

@@ -6,10 +6,39 @@ import java.util.concurrent.TimeUnit;
 
 public class ExecutorServiceSort implements Sorter {
     public final int threads;
+    private int step;
     private ExecutorService executorService;
 
     public ExecutorServiceSort(int threads) {
         this.threads = threads;
+        switch (threads) {
+            case 2:
+                this.step = 1000000;
+                break;
+            case 4:
+                this.step = 600000;
+                break;
+            case 8:
+                this.step = 300000;
+                break;
+            case 16:
+                this.step = 130000;
+                break;
+            case 32:
+                this.step = 63000;
+                break;
+            case 48:
+                this.step = 41666;
+                break;
+            case 64:
+                this.step = 31250;
+                break;
+            case 96:
+                this.step = 20833;
+                break;
+            default:
+                break;
+        }
     }
 
 	public int getThreads() {
@@ -33,7 +62,7 @@ public class ExecutorServiceSort implements Sorter {
 
 	private void parallelQuickSort(int[] arr, int low, int high) {
 		if (low < high) {
-			if (high - low <= 1000) {
+			if (high - low <= this.step) {
 				sequentialQuickSort(arr, low, high);
 			} else {
 				int partitionIndex = partition(arr, low, high);
