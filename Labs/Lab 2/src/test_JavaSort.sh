@@ -6,7 +6,6 @@
 set -e
 
 ALGO=JavaSort
-THREADS=2
 SIZE=1000000
 WARMUP=10
 MEASURE=1000
@@ -14,6 +13,6 @@ SEED=42
 
 javac MeasureMain.java
 
-for THREADS in 1 2 4 8; do
+for THREADS in 2 4 8 16 32 48 64 96; do
 	java MeasureMain $ALGO $THREADS $SIZE $WARMUP $MEASURE $SEED
 done
