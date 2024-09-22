@@ -1,0 +1,220 @@
+\documentclass{article}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{dirtytalk}
+\usepackage{pgfplotstable} 
+\usepackage{pgfplots}
+\usepackage{datatool}
+\usepackage{siunitx}
+\usepackage[hyphens]{url}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{float}
+\usepackage[style=ieee]{biblatex}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage[normalem]{ulem}
+\useunder{\uline}{\ul}{}
+
+\addbibresource{main.bib}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=blue,      
+    urlcolor=blue,
+    citecolor=blue,
+}
+
+\pgfplotsset{compat=1.18}
+
+\title{\textbf{Parallel and Distributed Computing\\DD2443 - Pardis24\\Exercises for Lecture 8}}
+\author{Name: Casper Kristiansson}
+\date{\today}
+
+\begin{document}
+
+\setlength\parindent{0pt}
+\setlength{\parskip}{\bigskipamount}
+
+\maketitle
+\section*{Exercise 1}
+\subsection*{Question}
+Assume an initial memory in which X, Y and A are all set to 0. Consider the following threads:
+
+T0: X = 1
+
+\texttt{if (Y = 0) \{ A = 2 \}}
+
+T1: Y = 1
+
+\texttt{if (X = 0) \{ A = 3 \}}
+
+For each of the following schedules, mark if they are allowed under Sequential Consistency (SC), Total Store Ordering (TSO), neither, or both. Indicate which reordering constraints they violate, if any.
+
+\begin{enumerate}
+    \item T0:Read(Y,0), T1:Write(Y,1), T0:Write(X,1), T1:Read(X,0), T0:Write(A,2), T1:Write(A,3)
+    \item T0:Write(X,1), T1:Write(Y,1), T0:Read(Y,1), T1:Read(X,1)
+    \item T0:Write(A,2), T0:Write(X,1), T0:Read(Y,0), T1:Write(Y,1), T1:Read(X,1)
+    \item T0:Read(Y,0), T1:Read(X,0), T0:Write(X,1), T1:Write(Y,1), T0:Write(A,2), T1:Write(A,3)
+    \item T0:Write(X,1), T0:Read(Y,0), T1:Write(Y,1), T1:Read(X,1), T0:Write(A,2)
+\end{enumerate}
+
+\subsection*{Answer}
+
+
+
+\begin{enumerate}
+    \item  \begin{itemize}
+        \item \textbf{SC:} This type of order is not allowed due to when Y=1 is written by T1, the action of reading Y=0 by T0 is not possible with SC.
+        \item \textbf{TSO:} Not allowed because it allows reordering of writes before reads but not writes after reads. And because Y happens before T1 writes the value where the writing to A happens afterward, it will lead to not following the constraint of TSO.
+    \end{itemize}
+    \item  \begin{itemize}
+        \item \textbf{SC:} Allowed because due to T0 and T1 perform there operations in same order as the program
+        \item \textbf{TSO:} Allowed because the reads of Y and X are consistent and follow the guideline for TSO for the reads afterward.
+    \end{itemize}
+    \item  \begin{itemize}
+        \item \textbf{SC:} Allowed
+        \item \textbf{TSO:} Allowed
+    \end{itemize}
+    \item  \begin{itemize}
+        \item \textbf{SC:} Not allowed because with SC when T1 writes Y=1 the operation that T0 to read Y=0 should not be possible.
+        \item \textbf{TSO:} Now allowed because with TSO the read operation of Y=0 happens before T1 writes Y=1 which makes it not uphold the constraints of TSO.
+    \end{itemize}
+    \item  \begin{itemize}
+        \item \textbf{SC:} Allowed
+        \item \textbf{TSO:} Allowed
+    \end{itemize}
+\end{enumerate}
+
+
+
+\section*{Exercise 2}
+\subsection*{Question}
+Machines with relaxed memory consistency typically provide programmers with fence instructions to tighten the ordering of memory instructions. Insert MFENCE (memory fence) instructions in Peterson’s algorithm to ensure its correct behavior on a multi-processor system that implements a write buffer with store bypass. Assume that the fence atomically flushes the write buffer. Use as few fence instructions as necessary.
+
+\subsection*{Answer}
+
+To utilize MFENCE Peterson's algorithm for ensuring its correct behavior on a multi-processor system. I will base it on this implementation of Peterson's algorithm:
+
+\subsection*{Original Peterson's Algorithm}
+
+\begin{lstlisting}[language=C]
+// Shared variables
+int turn = 0;
+bool flag[2] = {false, false};
+
+// Process 0
+while (true) {
+    flag[0] = true;
+    turn = 1;
+    while (flag[1] && turn == 1) {
+        // busy wait
+    }
+    // critical section
+    flag[0] = false;
+    // remainder section
+}
+
+// Process 1
+while (true) {
+    flag[1] = true;
+    turn = 0;
+    while (flag[0] && turn == 0) {
+        // busy wait
+    }
+    // critical section
+    flag[1] = false;
+    // remainder section
+}
+\end{lstlisting}
+
+\subsection*{Modified Peterson's Algorithm with MFENCE}
+
+\begin{lstlisting}[language=C]
+// Shared variables
+int turn = 0;
+bool flag[2] = {false, false};
+
+// Process 0
+while (true) {
+    flag[0] = true;
+    MFENCE;
+    turn = 1;  
+    MFENCE;             
+    while (flag[1] && turn == 1) {
+        // busy wait
+    }
+    // critical section
+    flag[0] = false;        
+    MFENCE;                  
+    // remainder section
+}
+
+// Process 1
+while (true) {
+    flag[1] = true;         
+    MFENCE;               
+    turn = 0;            
+    MFENCE;                 
+    while (flag[0] && turn == 0) {
+        // busy wait
+    }
+    // critical section
+    flag[1] = false;      
+    MFENCE;             
+    // remainder section
+}
+\end{lstlisting}
+
+This implementation of Peterson's algorithm ensures proper synchronization between two processes by using MFENCE instructions. It prevents memory reordering in systems while ensuring relaxed memory consistency. The MFENCE instructions make sure that the correct visibility of updates to shared variables (flag and turn). This helps and ensures that each process sees the latest changes before entering the critical section.
+
+
+
+\section*{Exercise 3}
+\subsection*{Question}
+A programmer who writes properly synchronized code relative to the high-level language’s consistency model (e.g., Java) does not need to consider the architecture’s memory consistency model. True or false?
+
+\subsection*{Answer}
+
+The above statement is true. In a high-level language like Java, perfectly synchronized code follows the language's memory coherence model, such as Java's precedence rules, to ensure that operations are performed smoothly. They will be visible to all threads in the correct order. The language runtime handles the complexity of the underlying hardware memory model. Therefore, as long as the programmer uses a synchronization mechanism such as synchronized blocks or volatile variables, They don't need to worry about the architecture's memory consistency model.
+
+
+
+
+\section*{Exercise 4}
+\subsection*{Question}
+Consider the following variant of an ARM spinlock:
+
+\begin{verbatim}
+MOV R1, #0x1 ; load the ’lock taken’ value
+
+try: LDAXR R0, [L] ; load the lock value
+
+CMP R0, #0 ; is the lock free?
+
+STREXEQ R1, R0, [L] ; try and claim the lock
+
+CMPEQ R0, #0 ; did this succeed?
+
+BNE try ; no - try again. . .
+
+; critical section
+
+SYNC ; fence instruction
+
+STR ZR, [L]
+\end{verbatim}
+
+As in the slides, the lock is taken if variable L is set to 1. Note that the final store is a plain store with no ‘release’ semantics. Is the fence (SYNC) before the unlock needed? What would happen if it was removed?
+
+\subsection*{Answer}
+
+The SYNC instruction on an ARM processor ensures memory ordering. This means that all memory operations within a critical section of an instruction are completed before any operations leading up after the operation. This means that if the SYNC is removed the operation in the critical section not being synced. This means that an operation might not be visible to other threads before the lock is released. In short, because a write-to memory could be delayed without SYNC could lead to the changes not being visible to other operations in a multithreading system.
+
+
+\newpage
+\printbibliography
+
+\end{document}
