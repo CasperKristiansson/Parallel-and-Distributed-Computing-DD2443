@@ -2,369 +2,373 @@
 Sorting algorithm:  JavaSort
 Thread count:       2
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-JavaSort 2 132295006.00 40075359.19
+JavaSort 2 39127808.00 1135007.58
 Measurements done
 Sorting algorithm:  JavaSort
 Thread count:       4
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-JavaSort 4 44196145.00 1575651.75
+JavaSort 4 20666451.00 748366.21
 Measurements done
 Sorting algorithm:  JavaSort
 Thread count:       8
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-JavaSort 8 25620708.00 1367365.37
+JavaSort 8 10542413.00 561246.86
 Measurements done
 Sorting algorithm:  JavaSort
 Thread count:       16
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-JavaSort 16 13328074.00 928225.12
+JavaSort 16 6404529.00 699507.70
 Measurements done
 Sorting algorithm:  JavaSort
 Thread count:       32
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-JavaSort 32 7698899.00 633464.84
+JavaSort 32 4678069.00 778847.41
 Measurements done
 Sorting algorithm:  JavaSort
 Thread count:       48
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-JavaSort 48 6253062.00 893684.01
+JavaSort 48 4573218.00 758470.41
 Measurements done
 Sorting algorithm:  JavaSort
 Thread count:       64
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-JavaSort 64 5614646.00 961887.43
+JavaSort 64 4528117.00 780310.18
 Measurements done
 Sorting algorithm:  JavaSort
 Thread count:       96
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-JavaSort 96 6197252.00 1493248.31
+JavaSort 96 4030732.00 973407.69
 Measurements done
 
 # Sequential
 Sorting algorithm:  Sequential
 Thread count:       1
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-Sequential 1 129454026.00 40407135.26
+Sequential 1 98375192.00 1115198.69
+
 
 # ForkJoinPool
 Sorting algorithm:  ForkJoinPool
 Thread count:       2
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-ForkJoinPool 2 93193675.00 16219836.37
+ForkJoinPool 2 50777507.00 10069937.40
 Measurements done
 Sorting algorithm:  ForkJoinPool
 Thread count:       4
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-ForkJoinPool 4 59828900.00 8963450.62
+ForkJoinPool 4 30099272.00 4554611.07
 Measurements done
 Sorting algorithm:  ForkJoinPool
 Thread count:       8
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-ForkJoinPool 8 38144875.00 4589167.85
+ForkJoinPool 8 19676417.00 2184462.20
 Measurements done
 Sorting algorithm:  ForkJoinPool
 Thread count:       16
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-ForkJoinPool 16 28537074.00 3196057.63
+ForkJoinPool 16 15081326.00 1675102.03
 Measurements done
 Sorting algorithm:  ForkJoinPool
 Thread count:       32
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-ForkJoinPool 32 27099861.00 4240112.81
+ForkJoinPool 32 14159631.00 1283151.66
 Measurements done
 Sorting algorithm:  ForkJoinPool
 Thread count:       48
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-ForkJoinPool 48 30081903.00 7015952.93
+ForkJoinPool 48 15940449.00 2074821.40
 Measurements done
 Sorting algorithm:  ForkJoinPool
 Thread count:       64
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-ForkJoinPool 64 37324142.00 10953067.75
+ForkJoinPool 64 18542766.00 2599548.87
 Measurements done
 Sorting algorithm:  ForkJoinPool
 Thread count:       96
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-ForkJoinPool 96 57112912.00 14468953.10
+ForkJoinPool 96 29217961.00 6617562.70
 Measurements done
+
 
 # ParallelStream
 Sorting algorithm:  ParallelStream
 Thread count:       2
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-ParallelStream 2 100986981.00 19245298.65
+ParallelStream 2 54570861.00 10581384.99
 Measurements done
 Sorting algorithm:  ParallelStream
 Thread count:       4
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-ParallelStream 4 63167712.00 11249893.85
+ParallelStream 4 30656564.00 3584679.52
 Measurements done
 Sorting algorithm:  ParallelStream
 Thread count:       8
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-ParallelStream 8 38930265.00 4969360.51
+ParallelStream 8 20315757.00 2896688.92
 Measurements done
 Sorting algorithm:  ParallelStream
 Thread count:       16
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-ParallelStream 16 29882010.00 2400488.14
+ParallelStream 16 15386047.00 1129786.21
 Measurements done
 Sorting algorithm:  ParallelStream
 Thread count:       32
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-ParallelStream 32 26703048.00 2321435.22
+ParallelStream 32 13424364.00 912768.92
 Measurements done
 Sorting algorithm:  ParallelStream
 Thread count:       48
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-ParallelStream 48 27332320.00 2746658.16
+ParallelStream 48 13980294.00 1194538.87
 Measurements done
 Sorting algorithm:  ParallelStream
 Thread count:       64
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-ParallelStream 64 27559459.00 3172583.14
+ParallelStream 64 14275730.00 1201723.60
 Measurements done
 Sorting algorithm:  ParallelStream
 Thread count:       96
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-ParallelStream 96 32747105.00 4626437.52
+ParallelStream 96 16616517.00 1855317.68
 Measurements done
+
 
 # ExecutorService
 Sorting algorithm:  ExecutorService
 Thread count:       2
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-ExecutorService 2 93398602.00 1110590.75
+ExecutorService 2 64330588.00 14317362.29
+Measurements done
 Sorting algorithm:  ExecutorService
 Thread count:       4
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-ExecutorService 4 83398602.00 1020733.52
+ExecutorService 4 53049532.00 12837625.18
 Measurements done
 Sorting algorithm:  ExecutorService
 Thread count:       8
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-ExecutorService 8 74502427.00 16580740.45
+ExecutorService 8 48181362.00 14201074.37
 Measurements done
 Sorting algorithm:  ExecutorService
 Thread count:       16
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-ExecutorService 16 52071558.00 6021389.43
+ExecutorService 16 39885360.00 14177327.95
 Measurements done
 Sorting algorithm:  ExecutorService
 Thread count:       32
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-ExecutorService 32 37242654.00 3325049.19
+ExecutorService 32 35322993.00 15310176.24
 Measurements done
 Sorting algorithm:  ExecutorService
 Thread count:       48
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-ExecutorService 48 34249483.00 2932022.32
+ExecutorService 48 35839275.00 14436157.98
 Measurements done
 Sorting algorithm:  ExecutorService
 Thread count:       64
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-ExecutorService 64 35160171.00 3002500.51
+ExecutorService 64 30388955.00 10636754.44
 Measurements done
 Sorting algorithm:  ExecutorService
 Thread count:       96
 Array size:         1000000
-Warm-up rounds:     10
+Warm-up rounds:     5
 Measurement rounds: 100
 RNG seed:           42
 Validating sorter
 Validation passed
 Starting Measurements
-ExecutorService 96 40617235.00 6164265.18
+ExecutorService 96 27776243.00 8389408.83
 Measurements done
