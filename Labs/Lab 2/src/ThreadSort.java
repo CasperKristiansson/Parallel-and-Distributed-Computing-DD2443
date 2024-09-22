@@ -1,12 +1,8 @@
-import java.util.concurrent.Semaphore;
-
 public class ThreadSort implements Sorter {
     public final int threads;
-    private Semaphore semaphore;
 
     public ThreadSort(int threads) {
         this.threads = threads;
-        this.semaphore = new Semaphore(threads);
     }
 
     public int getThreads() {
@@ -23,23 +19,17 @@ public class ThreadSort implements Sorter {
             if (high - low <= 1000) {
                 sequentialQuickSort(arr, low, high);
             } else {
-                if (semaphore.tryAcquire()) {
-                    try {
-                        int partitionIndex = partition(arr, low, high);
+                try {
+                    int partitionIndex = partition(arr, low, high);
 
-                        Thread leftThread = new Thread(new Worker(arr, low, partitionIndex - 1));
-                        leftThread.start();
-                        parallelQuickSort(arr, partitionIndex + 1, high);
-                        
-                        leftThread.join();
-                        
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } finally {
-                        semaphore.release();
-                    }
-                } else {
-                    sequentialQuickSort(arr, low, high);
+                    Thread leftThread = new Thread(new Worker(arr, low, partitionIndex - 1));
+                    leftThread.start();
+                    parallelQuickSort(arr, partitionIndex + 1, high);
+                    
+                    leftThread.join();
+                    
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         }
