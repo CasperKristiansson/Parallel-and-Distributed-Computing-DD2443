@@ -27,6 +27,29 @@
     citecolor=blue,
 }
 
+\definecolor{codebg}{rgb}{0.95,0.95,0.92}
+\definecolor{commentcolor}{rgb}{0,0.6,0}
+\definecolor{keywordcolor}{rgb}{0.13, 0.29, 0.53}
+\definecolor{stringcolor}{rgb}{0.63, 0.13, 0.13}
+
+\lstset{
+    backgroundcolor=\color{codebg},   % Set background color
+    commentstyle=\color{commentcolor}, % Style for comments
+    keywordstyle=\color{keywordcolor}\bfseries, % Style for keywords
+    stringstyle=\color{stringcolor},  % Style for strings
+    basicstyle=\ttfamily\footnotesize, % Basic style for code
+    breaklines=true,                   % Line breaking
+    rulecolor=\color{black},           % Frame color
+    numbers=left,                      % Line numbers on the left
+    numberstyle=\tiny\color{gray},     % Style for line numbers
+    stepnumber=1,                      % Line numbers frequency
+    tabsize=4,                         % Set tab width
+    showspaces=false,                  % Don't show spaces
+    showstringspaces=false,            % Don't show string spaces
+    captionpos=b,                      % Caption at the bottom
+    morekeywords={public, class, int, void, ForkJoinPool, RecursiveTask} % Keywords to highlight
+}
+
 \pgfplotsset{compat=1.18}
 
 \title{\textbf{Parallel and Distributed Computing\\DD2443 - Pardis24\\Exercises for Lecture 9}}
@@ -42,19 +65,76 @@
 
 \section*{Exercise 1}
 \subsection*{Question}
+Write a class, \texttt{ArraySum}, that provides a method:
+\begin{lstlisting}[language=Java]
+static public int sum(int[] a)
+\end{lstlisting}
+that uses divide-and-conquer to sum the elements of the array argument in parallel.
 
 \subsection*{Answer}
+\begin{lstlisting}[language=Java]
+public class ArraySum {
+    public static int sum(int[] a) {
+        ForkJoinPool pool = new ForkJoinPool();
+        return pool.invoke(new SumTask(a, 0, a.length));
+    }
 
+    private static class SumTask extends RecursiveTask<Integer> {
+        private final int[] array;
+        private final int start, end;
 
+        public SumTask(int[] array, int start, int end) {
+            this.array = array;
+            this.start = start;
+            this.end = end;
+        }
+
+        @Override
+        protected Integer compute() {
+            if (end - start < 1000) {
+                int sum = 0;
+                for (int i = start; i < end; i++) sum += array[i];
+                return sum;
+            } else {
+                int mid = (start + end) / 2;
+                SumTask leftTask = new SumTask(array, start, mid);
+                SumTask rightTask = new SumTask(array, mid, end);
+                leftTask.fork();
+                return rightTask.compute() + leftTask.join();
+            }
+        }
+    }
+}
+\end{lstlisting}
 
 
 
 
 \section*{Exercise 2}
 \subsection*{Question}
+\begin{lstlisting}[language=Java]
+Queue qMin = (q0.size() < q1.size()) ? q0 : q1;
+Queue qMax = (q0.size() < q1.size()) ? q1 : q0;
+
+synchronized (qMin) {
+    synchronized (qMax) {
+        int diff = qMax.size() - qMin.size();
+        if (diff > THRESHOLD) {
+            while (qMax.size() > qMin.size()) {
+                qMin.enq(qMax.deq());
+            }
+        }
+    }
+}
+\end{lstlisting}
+
+The code above shows an alternate way of rebalancing two work queues: first, lock the smaller queue, then lock the larger queue, and rebalance if their difference exceeds a threshold. What is wrong with this code?
+
 
 \subsection*{Answer}
+The problem with this segment of code is that it could lead to a possible deadlock because of inconsistent locking order. This can happen because of qMin and qMax where they are acquired based on the sizes of the queue. For example, a situation where a deadlock could happen is where one thread tries to lock qMin and then tries to lock qMax. At the same time, another thread tries to lock qMax and then tries to lock qMin. In this situation, both threads could end up waiting for each other to release the locks and therefore a deadlock would happen.
 
+A possible solution to this would be to improve a consistent locking order. This can be completed by comparing an object's physical address (reference) address. So based on the address the different threads can acquire based on that.
 
 
 
@@ -63,9 +143,18 @@
 
 \section*{Exercise 3}
 \subsection*{Question}
+\begin{enumerate}
+    \item In the \texttt{popBottom()} method of HSLS Fig. 16.11, the \texttt{bottom} field is \texttt{volatile} to assure that in \texttt{popBottom()} the decrement at Line 15 is immediately visible. Describe a scenario that explains what could go wrong if \texttt{bottom} were not declared as \texttt{volatile}.
+    
+    \item Why should we attempt to reset the \texttt{bottom} field to zero as early as possible in the \texttt{popBottom()} method? Which line is the earliest in which this reset can be done safely? Can our \texttt{BoundedDEQueue} overflow anyway? Describe how.
+\end{enumerate}
+
 
 \subsection*{Answer}
-
+\begin{enumerate}
+    \item If the bottom was not declared as volatile the change happening on line 15 for the popBottom might not always be visible directly to the other threads. This means that it could lead to inconsistency where one thread might decrease the value while another sees another update. This means that we could end up in a situation where a queue is empty but one thread sees it as being nonempty and might perform a dequeue.
+    \item When resetting the bottom to zero at line 27 it is important to notify that the dequeue is empty. This can be done by adding a simple check with newBottom is equal to oldTop to ensure that there are no more tasks that remain.
+\end{enumerate}
 
 \newpage
 \printbibliography
