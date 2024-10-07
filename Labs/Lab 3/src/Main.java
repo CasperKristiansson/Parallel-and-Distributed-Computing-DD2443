@@ -7,7 +7,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		if (args.length == 0) {
-            args = new String[]{"1", "Default", "Normal", "100000", "1:1:8", "100000", "5", "10"};
+            args = new String[]{"8", "Default", "Normal", "100000", "1:1:8", "100000", "5", "10"};
             System.out.println("No arguments provided. Using default values: " + Arrays.toString(args));
         }
 		// Number of threads to use

@@ -1,13 +1,39 @@
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+
 public class Log {
 	private Log() {
 		// Do not implement
 	}
 
 	public static int validate(Log.Entry[] log) {
-		// Implement this.
-		// Should return the number of discrepancies in the log.
-		return -1;
-	}
+        HashSet<Integer> simulatedSet = new HashSet<>();
+        int discrepancies = 0;
+
+		Arrays.sort(log, Comparator.comparingLong(e -> e.timestamp));
+
+        for (Log.Entry entry : log) {
+            boolean expected = false;
+            switch (entry.method) {
+                case ADD:
+                    expected = simulatedSet.add(entry.arg);
+                    break;
+                case REMOVE:
+                    expected = simulatedSet.remove(entry.arg);
+                    break;
+                case CONTAINS:
+                    expected = simulatedSet.contains(entry.arg);
+                    break;
+            }
+
+            if (expected != entry.ret) {
+                discrepancies++;
+            }
+        }
+
+        return discrepancies;
+    }
 
 	// Log entry for linearization point.
 	public static class Entry {
