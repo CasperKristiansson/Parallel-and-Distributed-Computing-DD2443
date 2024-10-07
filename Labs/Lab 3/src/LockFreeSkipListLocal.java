@@ -1,6 +1,6 @@
 import java.util.concurrent.atomic.AtomicMarkableReference;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class LockFreeSkipListLocal<T extends Comparable<T>> implements LockFreeSet<T> {
@@ -10,7 +10,7 @@ public class LockFreeSkipListLocal<T extends Comparable<T>> implements LockFreeS
 	private final Node<T> tail = new Node<T>();
 
 	private final ArrayList<Log.Entry> log = new ArrayList<>();
-	private final ReentrantLock lock = new ReentrantLock();
+	private final ArrayList<Log.Entry>[] logs = new ArrayList[96];
 
 	public LockFreeSkipListLocal() {
 		for (int i = 0; i < head.next.length; i++) {
@@ -77,17 +77,13 @@ public class LockFreeSkipListLocal<T extends Comparable<T>> implements LockFreeS
 				}
 				Node<T> pred = preds[bottomLevel];
 				Node<T> succ = succs[bottomLevel];
-				
-				lock.lock();
-				try {
-					if (!pred.next[bottomLevel].compareAndSet(succ, newNode, false, false)) {
-						continue;
-					}
-					log.add(new Log.Entry(Log.Method.ADD, x.hashCode(), true, System.nanoTime()));
-				} finally {
-					lock.unlock();
+	
+				if (!pred.next[bottomLevel].compareAndSet(succ, newNode, false, false)) {
+					continue;
 				}
-				
+	
+				logs[threadId].add(new Log.Entry(Log.Method.ADD, x.hashCode(), true, System.nanoTime()));
+	
 				for (int level = bottomLevel + 1; level <= topLevel; level++) {
 					while (true) {
 						pred = preds[level];
@@ -125,21 +121,16 @@ public class LockFreeSkipListLocal<T extends Comparable<T>> implements LockFreeS
 				boolean[] marked = { false };
 				succ = nodeToRemove.next[bottomLevel].get(marked);
 				while (true) {
-					try {
-						lock.lock();
-						boolean iMarkedIt = nodeToRemove.next[bottomLevel].compareAndSet(succ, succ, false, true);
-						succ = succs[bottomLevel].next[bottomLevel].get(marked);
-						if (iMarkedIt) {
-							log.add(new Log.Entry(Log.Method.REMOVE, x.hashCode(), true, System.nanoTime()));
-							find(x, preds, succs);
-							return true;
-						} else if (marked[0]) {
-							return false;
-						}
-					} finally {
-						lock.unlock();
+					boolean iMarkedIt = nodeToRemove.next[bottomLevel].compareAndSet(succ, succ, false, true);
+					succ = succs[bottomLevel].next[bottomLevel].get(marked);
+					if (iMarkedIt) {
+						logs[threadId].add(new Log.Entry(Log.Method.REMOVE, x.hashCode(), true, System.nanoTime()));
+						find(x, preds, succs);
+						return true;
+					} else if (marked[0]) {
+						return false;
 					}
-				} 
+				}
 			}
 		}
 	}
@@ -151,31 +142,27 @@ public class LockFreeSkipListLocal<T extends Comparable<T>> implements LockFreeS
 		Node<T> pred = head;
 		Node<T> curr = null;
 		Node<T> succ = null;
-
-		lock.lock();
-		try {
-			for (int level = MAX_LEVEL; level >= bottomLevel; level--) {
-				curr = pred.next[level].getReference();
-				while (true) {
+		for (int level = MAX_LEVEL; level >= bottomLevel; level--) {
+			curr = pred.next[level].getReference();
+			while (true) {
+				succ = curr.next[level].get(marked);
+				while (marked[0]) {
+					curr = succ;
 					succ = curr.next[level].get(marked);
-					while (marked[0]) {
-						curr = succ;
-						succ = curr.next[level].get(marked);
-					}
-					if (curr.value != null && x.compareTo(curr.value) < 0) {
-						pred = curr;
-						curr = succ;
-					} else {
-						break;
-					}
+				}
+				if (curr.value != null && x.compareTo(curr.value) < 0) {
+					pred = curr;
+					curr = succ;
+				} else {
+					break;
 				}
 			}
-			boolean result = curr.value != null && x.compareTo(curr.value) == 0;
-			log.add(new Log.Entry(Log.Method.CONTAINS, key, result, System.nanoTime()));
-			return result;
-		} finally {
-			lock.unlock();
 		}
+	
+		boolean result = curr.value != null && x.compareTo(curr.value) == 0;
+		logs[threadId].add(new Log.Entry(Log.Method.CONTAINS, key, result, System.nanoTime()));
+	
+		return result;
 	}
 
 	private boolean find(T x, Node<T>[] preds, Node<T>[] succs) {
@@ -214,7 +201,15 @@ public class LockFreeSkipListLocal<T extends Comparable<T>> implements LockFreeS
 	}
 
 	public Log.Entry[] getLog() {
-		return log.toArray(new Log.Entry[0]);
+		ArrayList<Log.Entry> globalLog = new ArrayList<>();
+    
+		for (int i = 0; i < logs.length; i++) {
+			if (logs[i] != null) {
+				globalLog.addAll(logs[i]);
+			}
+		}
+
+		return globalLog.toArray(new Log.Entry[0]);
 	}
 
 	public void reset() {
