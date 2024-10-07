@@ -1,8 +1,5 @@
 import java.util.concurrent.atomic.AtomicMarkableReference;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.List;
-import java.util.ArrayList;
-
 
 public class LockFreeSkipList<T extends Comparable<T>> implements LockFreeSet<T> {
 	/* Number of levels */
@@ -10,8 +7,6 @@ public class LockFreeSkipList<T extends Comparable<T>> implements LockFreeSet<T>
 
 	private final Node<T> head = new Node<T>();
 	private final Node<T> tail = new Node<T>();
-
-	private final List<Log.Entry> log = new ArrayList<>();
 
 	public LockFreeSkipList() {
 		for (int i = 0; i < head.next.length; i++) {
@@ -90,10 +85,6 @@ public class LockFreeSkipList<T extends Comparable<T>> implements LockFreeSet<T>
 						find(x, preds, succs);
 					}
 				}
-
-				long timestamp = System.nanoTime();
-				log.add(new Log.Entry(Log.Method.ADD, x.hashCode(), true, timestamp));
-
 				return true;
 			}
 		}
@@ -125,9 +116,6 @@ public class LockFreeSkipList<T extends Comparable<T>> implements LockFreeSet<T>
 					boolean iMarkedIt = nodeToRemove.next[bottomLevel].compareAndSet(succ, succ, false, true);
 					succ = succs[bottomLevel].next[bottomLevel].get(marked);
 					if (iMarkedIt) {
-						long timestamp = System.nanoTime();
-                    	log.add(new Log.Entry(Log.Method.REMOVE, x.hashCode(), true, timestamp));
-
 						find(x, preds, succs);
 						return true;
 					} else if (marked[0]) {
@@ -161,13 +149,7 @@ public class LockFreeSkipList<T extends Comparable<T>> implements LockFreeSet<T>
 				}
 			}
 		}
-
-		boolean value = curr.value != null && x.compareTo(curr.value) == 0;
-
-		long timestamp = System.nanoTime();
-    	log.add(new Log.Entry(Log.Method.CONTAINS, x.hashCode(), value, timestamp));
-
-		return value;
+		return curr.value != null && x.compareTo(curr.value) == 0;
 	}
 
 	private boolean find(T x, Node<T>[] preds, Node<T>[] succs) {
@@ -201,25 +183,19 @@ public class LockFreeSkipList<T extends Comparable<T>> implements LockFreeSet<T>
 				preds[level] = pred;
 				succs[level] = curr;
 			}
-			boolean value = curr.value != null && x.compareTo(curr.value) == 0;
-			long timestamp = System.nanoTime();
-			log.add(new Log.Entry(Log.Method.CONTAINS, x.hashCode(), value, timestamp));
-	
-			return value;
+			return curr.value != null && x.compareTo(curr.value) == 0;
 		}
-	}	
-
-	public Log.Entry[] getLog() {
-		return log.toArray(new Log.Entry[0]);
 	}
 
-	
+	public Log.Entry[] getLog() {
+		// This should fetch the log from the skiplist.
+		return null;
+	}
 
 	public void reset() {
 		for (int i = 0; i < head.next.length; i++) {
 			head.next[i] = new AtomicMarkableReference<LockFreeSkipList.Node<T>>(tail, false);
 		}
-		
-		log.clear();
+		// TODO: Clear the log if you have one.
 	}
 }

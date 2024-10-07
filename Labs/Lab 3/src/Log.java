@@ -1,39 +1,13 @@
-import java.util.HashSet;
-import java.util.Set;
-
 public class Log {
 	private Log() {
+		// Do not implement
 	}
 
 	public static int validate(Log.Entry[] log) {
-		Set<Integer> set = new HashSet<Integer>();
-		int discrepancies = 0;
-		for (Log.Entry entry : log) {
-			switch (entry.method) {
-				case ADD:
-					if (set.contains(entry.arg)) {
-						discrepancies++;
-					} else {
-						set.add(entry.arg);
-					}
-					break;
-				case REMOVE:
-					if (!set.contains(entry.arg)) {
-						discrepancies++;
-					} else {
-						set.remove(entry.arg);
-					}
-					break;
-				case CONTAINS:
-					boolean expected = set.contains(entry.arg);
-					if (expected != entry.ret) {
-						discrepancies++;
-					}
-					break;
-			}
-		}
-		return discrepancies;
-	}	
+		// Implement this.
+		// Should return the number of discrepancies in the log.
+		return -1;
+	}
 
 	// Log entry for linearization point.
 	public static class Entry {
