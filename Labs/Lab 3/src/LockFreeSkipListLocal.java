@@ -2,22 +2,26 @@ import java.util.concurrent.atomic.AtomicMarkableReference;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class LockFreeSkipListLocal<T extends Comparable<T>> implements LockFreeSet<T> {
 	private static final int MAX_LEVEL = 16;
+	private static final int MAX_THREADS = 96;
 
 	private final Node<T> head = new Node<T>();
 	private final Node<T> tail = new Node<T>();
 
-	private final Map<Integer, List<Log.Entry>> threadLogs = new ConcurrentHashMap<Integer, List<Log.Entry>>();
+	private List<List<Log.Entry>> list = new ArrayList<>();
 
 	public LockFreeSkipListLocal() {
 		for (int i = 0; i < head.next.length; i++) {
 			head.next[i] = new AtomicMarkableReference<LockFreeSkipListLocal.Node<T>>(tail, false);
 		}
+
+		list = new ArrayList<>();
+        for (int i = 0; i < MAX_THREADS; i++) {
+            list.add(new ArrayList<>());
+        }
 	}
 
 	private static final class Node<T> {
@@ -205,13 +209,12 @@ public class LockFreeSkipListLocal<T extends Comparable<T>> implements LockFreeS
 	private void logOperation(int threadId, Log.Method method, int arg, boolean ret, long timestamp) {
         Log.Entry entry = new Log.Entry(method, arg, ret, timestamp);
 
-        // Get the thread's log or create one if it doesn't exist
-        threadLogs.computeIfAbsent(threadId, id -> new LinkedList<>()).add(entry);
+		list.get(threadId).add(entry);
     }
 
 	public Log.Entry[] getLog() {
-		List<Log.Entry> log = new ArrayList<>();
-		for (List<Log.Entry> entries : threadLogs.values()) {
+		List<Log.Entry> log = new LinkedList<>();
+		for (List<Log.Entry> entries : list) {
 			log.addAll(entries);
 		}
 		return log.toArray(new Log.Entry[0]);
@@ -221,6 +224,10 @@ public class LockFreeSkipListLocal<T extends Comparable<T>> implements LockFreeS
 		for (int i = 0; i < head.next.length; i++) {
 			head.next[i] = new AtomicMarkableReference<>(tail, false);
 		}
-		threadLogs.clear();
+		
+		list = new ArrayList<>();
+		for (int i = 0; i < MAX_THREADS; i++) {
+			list.add(new ArrayList<>());
+		}
 	}
 }
