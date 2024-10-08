@@ -6,10 +6,10 @@ import java.util.Random;
 public class Main {
 
 	public static void main(String[] args) {
-		if (args.length == 0) {
-            args = new String[]{"8", "LocalLog", "Uniform", "100000", "1:1:8", "100000", "5", "10"};
-            System.out.println("No arguments provided. Using default values: " + Arrays.toString(args));
-        }
+		// if (args.length == 0) {
+        //     args = new String[]{"8", "LocalLog", "Uniform", "100000", "1:1:8", "100000", "5", "10"};
+        //     System.out.println("No arguments provided. Using default values: " + Arrays.toString(args));
+        // }
 		// Number of threads to use
 		int threads = Integer.parseInt(args[0]);
 

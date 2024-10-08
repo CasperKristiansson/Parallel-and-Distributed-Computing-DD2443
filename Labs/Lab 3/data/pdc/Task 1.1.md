@@ -238,7 +238,7 @@ Measurement discrepancy: -1
 Measurement time: 2791640580
 Measurement discrepancy: -1
 
-# # java Main 96 Default Normal 100000 1:1:0 1000000 2 5
+# java Main 96 Default Normal 100000 1:1:0 1000000 2 5
 Warmup time: 3564943700
 Warmup discrepancy: -1
 Warmup time: 3768766045
