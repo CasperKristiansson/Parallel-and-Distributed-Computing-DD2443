@@ -65,9 +65,16 @@ public class LockFreeSkipList<T extends Comparable<T>> implements LockFreeSet<T>
 		int bottomLevel = 0;
 		Node<T>[] preds = (Node<T>[]) new Node[MAX_LEVEL + 1];
 		Node<T>[] succs = (Node<T>[]) new Node[MAX_LEVEL + 1];
+		long[] timestamp = new long[1];
 		while (true) {
-			boolean found = find(x, preds, succs);
+			boolean found = find(x, preds, succs, timestamp);
 			if (found) {
+				lock.lock();
+				try {
+					log.add(new Log.Entry(Log.Method.ADD, x.hashCode(), false, timestamp[0]));
+				} finally {
+					lock.unlock();
+				}
 				return false;
 			} else {
 				Node<T> newNode = new Node(x, topLevel);
@@ -87,14 +94,13 @@ public class LockFreeSkipList<T extends Comparable<T>> implements LockFreeSet<T>
 				} finally {
 					lock.unlock();
 				}
-				
 				for (int level = bottomLevel + 1; level <= topLevel; level++) {
 					while (true) {
 						pred = preds[level];
 						succ = succs[level];
 						if (pred.next[level].compareAndSet(succ, newNode, false, false))
 							break;
-						find(x, preds, succs);
+						find(x, preds, succs, timestamp);
 					}
 				}
 				return true;
@@ -108,9 +114,17 @@ public class LockFreeSkipList<T extends Comparable<T>> implements LockFreeSet<T>
 		Node<T>[] preds = (Node<T>[]) new Node[MAX_LEVEL + 1];
 		Node<T>[] succs = (Node<T>[]) new Node[MAX_LEVEL + 1];
 		Node<T> succ;
+		long[] findTimeStamp = new long[1];
+		long timestamp = 0;
 		while (true) {
-			boolean found = find(x, preds, succs);
+			boolean found = find(x, preds, succs, findTimeStamp);
 			if (!found) {
+				lock.lock();
+				try {
+					log.add(new Log.Entry(Log.Method.REMOVE, x.hashCode(), false, findTimeStamp[0]));
+				} finally {
+					lock.unlock();
+				}
 				return false;
 			} else {
 				Node<T> nodeToRemove = succs[bottomLevel];
@@ -125,19 +139,32 @@ public class LockFreeSkipList<T extends Comparable<T>> implements LockFreeSet<T>
 				boolean[] marked = { false };
 				succ = nodeToRemove.next[bottomLevel].get(marked);
 				while (true) {
+					boolean iMarkedIt;
+
+					lock.lock();
 					try {
-						lock.lock();
-						boolean iMarkedIt = nodeToRemove.next[bottomLevel].compareAndSet(succ, succ, false, true);
-						succ = succs[bottomLevel].next[bottomLevel].get(marked);
-						if (iMarkedIt) {
-							log.add(new Log.Entry(Log.Method.REMOVE, x.hashCode(), true, System.nanoTime()));
-							find(x, preds, succs);
-							return true;
-						} else if (marked[0]) {
-							return false;
-						}
+						iMarkedIt = nodeToRemove.next[bottomLevel].compareAndSet(succ, succ, false, true);
+						timestamp = System.nanoTime();
 					} finally {
 						lock.unlock();
+					}
+					succ = succs[bottomLevel].next[bottomLevel].get(marked);
+					if (iMarkedIt) {
+						lock.lock();
+						try {
+							log.add(new Log.Entry(Log.Method.REMOVE, x.hashCode(), true, timestamp));
+						} finally {
+							lock.unlock();
+						}
+						find(x, preds, succs, findTimeStamp);
+						return true;
+					} else if (marked[0]) {
+						try {
+							log.add(new Log.Entry(Log.Method.REMOVE_PLACE_HOLDER, x.hashCode(), false,  System.nanoTime()));
+						} finally {
+							lock.unlock();
+						}
+						return false;
 					}
 				} 
 			}
@@ -151,34 +178,38 @@ public class LockFreeSkipList<T extends Comparable<T>> implements LockFreeSet<T>
 		Node<T> pred = head;
 		Node<T> curr = null;
 		Node<T> succ = null;
+		long timestamp = 0;
+		boolean result;
+
+		for (int level = MAX_LEVEL; level >= bottomLevel; level--) {
+			curr = pred.next[level].getReference();
+			while (true) {
+				succ = curr.next[level].get(marked);
+				while (marked[0]) {
+					curr = succ;
+					succ = curr.next[level].get(marked);
+				}
+				timestamp = System.nanoTime();
+				if (curr.value != null && x.compareTo(curr.value) < 0) {
+					pred = curr;
+					curr = succ;
+				} else {
+					break;
+				}
+			}
+		}
+		result = curr.value != null && x.compareTo(curr.value) == 0;
 
 		lock.lock();
 		try {
-			for (int level = MAX_LEVEL; level >= bottomLevel; level--) {
-				curr = pred.next[level].getReference();
-				while (true) {
-					succ = curr.next[level].get(marked);
-					while (marked[0]) {
-						curr = succ;
-						succ = curr.next[level].get(marked);
-					}
-					if (curr.value != null && x.compareTo(curr.value) < 0) {
-						pred = curr;
-						curr = succ;
-					} else {
-						break;
-					}
-				}
-			}
-			boolean result = curr.value != null && x.compareTo(curr.value) == 0;
-			log.add(new Log.Entry(Log.Method.CONTAINS, key, result, System.nanoTime()));
-			return result;
+			log.add(new Log.Entry(Log.Method.CONTAINS, x.hashCode(), result, timestamp));
 		} finally {
 			lock.unlock();
 		}
+		return result;
 	}
 
-	private boolean find(T x, Node<T>[] preds, Node<T>[] succs) {
+	private boolean find(T x, Node<T>[] preds, Node<T>[] succs, long[] timestamp) {
 		int bottomLevel = 0;
 		boolean[] marked = { false };
 		boolean snip;
@@ -199,6 +230,7 @@ public class LockFreeSkipList<T extends Comparable<T>> implements LockFreeSet<T>
 						curr = succ;
 						succ = curr.next[level].get(marked);
 					}
+					timestamp[0] = System.nanoTime();
 					if (curr.value != null && x.compareTo(curr.value) < 0) {
 						pred = curr;
 						curr = succ;

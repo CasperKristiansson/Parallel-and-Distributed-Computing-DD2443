@@ -11,6 +11,18 @@ public class Log {
         HashSet<Integer> simulatedSet = new HashSet<>();
         int discrepancies = 0;
 
+        long lastRemoveTimestamp = -1;
+        for (int i = log.length - 1; i >= 0; i--) {
+            Log.Entry entry = log[i];
+            if (entry.method == Log.Method.REMOVE) {
+                lastRemoveTimestamp = entry.timestamp;
+            } else if (entry.method == Log.Method.REMOVE_PLACE_HOLDER) {
+                if (lastRemoveTimestamp != -1) {
+                    entry.timestamp = lastRemoveTimestamp;
+                }
+            }
+        }
+
 		Arrays.sort(log, Comparator.comparingLong(e -> e.timestamp));
 
         for (Log.Entry entry : log) {
@@ -51,6 +63,6 @@ public class Log {
 	}
 
 	public static enum Method {
-		ADD, REMOVE, CONTAINS
+		ADD, REMOVE, CONTAINS, REMOVE_PLACE_HOLDER
 	}
 }
