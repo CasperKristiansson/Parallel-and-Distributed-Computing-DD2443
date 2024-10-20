@@ -1,0 +1,99 @@
+\documentclass{article}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{dirtytalk}
+\usepackage{pgfplotstable} 
+\usepackage{pgfplots}
+\usepackage{datatool}
+\usepackage{siunitx}
+\usepackage[hyphens]{url}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{float}
+\usepackage[style=ieee]{biblatex}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage[normalem]{ulem}
+\useunder{\uline}{\ul}{}
+
+\addbibresource{main.bib}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=blue,      
+    urlcolor=blue,
+    citecolor=blue,
+}
+
+\pgfplotsset{compat=1.18}
+
+\title{\textbf{Parallel and Distributed Computing\\DD2443 - Pardis24\\Exercises for Lecture 14}}
+\author{Name: Casper Kristiansson}
+\date{\today}
+
+\begin{document}
+
+\setlength\parindent{0pt}
+\setlength{\parskip}{\bigskipamount}
+
+\maketitle
+
+\section*{Exercise 1}
+\subsection*{Question}
+The pancake graph $P_n$ is defined as follows: The vertex set is
+\[
+V (P_n) = \{(v_1, \ldots, v_n) \mid v_i \in \{1, \ldots, n\} \text{ and } v_i \neq v_j \text{ for all } i \neq j\}
+\]
+That is, the nodes of $P_n$ are exactly the permutations of the set $\{1, \ldots, n\}$. The edges of $P_n$ are the set
+
+\[
+\begin{aligned}
+E(P_n) = \{ & ((v_1, \ldots, v_i, \ldots, v_n), (w_1, \ldots, w_i, \ldots, w_n)) \mid \\
+            & w_j = v_{i-j+1} \text{ for } 1 \leq j \leq i \text{ and } \\
+            & w_j = v_j \text{ for } i < j \leq n \}
+\end{aligned}
+\]
+
+
+Each edge represents a prefix reversal
+\[
+(v_1, \ldots, v_i, v_{i+1}, \ldots, v_n) \leftrightarrow (v_i, \ldots, v_1, v_{i+1}, \ldots, v_n)
+\]
+
+For the following questions, where appropriate, give your answers in terms of $N := |V (P_n)|$ (approximately), the number of vertices, as well as $n$.
+\begin{enumerate}
+    \item[a)] Draw (legibly!) $P_n$ for $n = 2, 3, 4$. Try to describe a pattern for drawing $P_n$ for any $n$.
+    \item[b)] What is the degree of each vertex in $P_n$?
+    \item[c)] Can you give bounds on the diameter $D(P_n)$ of the pancake network?
+    \item[d)] Show that $P_n$ is a Hamiltonian graph for $n \geq 3$.
+    \item[e)] Suggest how the pancake graph can be used to implement a distributed hash table (DHT). Where are files, indexed by bitstrings of a certain length $b$, stored in the pancake graph, and how can these files be looked up (given the corresponding bitstring)? You do not need to consider network churn in this exercise.
+\end{enumerate}
+
+\subsection*{Answer}
+\subsubsection*{(a)}
+If we have a draw that $P_n$ for $n = 2, 3, 4$ it would lead to the pattern that $P_2$ its two nodes (1,2) and (2,1) are connected by an edge. For  $P_3$ the six nodes with the labels 1,2,3 will all be connected with an edge. And lastly, the combination of 1,2,3,4 will also share a edge. This kind of pattern that gets created is represented as prefix reversal for some kind of length which in this case is the combinations of (1,2), (1,2,3), and lastly (1,2,3,4).
+
+
+
+\subsubsection*{(b)}
+For each of the vertexes defined in $P_n$ will be matched with a permutation of n elements. For any given permutation there will be \(n-1\) possible different combinations of prefix reversal. Because of this, it will result in the total degree of the vertex being \(n-1\).
+
+
+\subsubsection*{(c)}
+Bounds on the diameter $D(P_n)$ of the pancake network can be defined with the maximum distance between any two vertices in the graph. The problem is defined as the minimum amount of reversals. This definition can be defined by a lower and upper bound. We know that we need at least \(n-1\) reversals in the worst case. The upper limit can be defined for the worst case for the sorting permutations which has a complexity of \(\frac{5n}{3}\).
+
+
+
+\subsubsection*{(d)}
+For the given problem we want to show that $P_n$ is a Hamiltonian graph for $n \geq 3$. In a Hamiltonian graph is defined that it will contain a Hamiltonian cycle that goes through all vertexes exactly once. This means that there is a path for $P_n$ that can be established as a Hamiltonian cycle. This means that if we have that $P_2$ the graph will only consist of two vertex consisting of a single edge, but because a cycle needs to be formed it requires at least 3 edges. But for cases with that  $n \geq 3$ to have connectivity between the vertex so that there exist enough paths so that all routes can traverse all varieties exactly once.
+
+
+\subsubsection*{(e)}
+A pancake graph can be used to implement a distributed hash table (DHT) by associating each of the permutations of the vertex with a specific node in a network. Then each file that we want to store will be stored in a specific node specific by the specific hash of the file key (bit string). By doing this it means that to look up any file in the entire network the key is just hashed using the same function and then we know the location of the permutation and the graph can easily be traversed to find the location of the node. Using this type of structure allows efficient routing with short lookup speed.
+
+\newpage
+\printbibliography
+
+\end{document}
