@@ -20,7 +20,7 @@ public class Log {
                 lastRemoveTimestamp = entry.timestamp;
             } else if (entry.method == Log.Method.REMOVE_PLACE_HOLDER) {
                 if (lastRemoveTimestamp != -1) {
-                    entry.timestamp = lastRemoveTimestamp;
+                    entry.timestamp = lastRemoveTimestamp + 1;
                     entry.method = Log.Method.REMOVE;
                 }
             }
