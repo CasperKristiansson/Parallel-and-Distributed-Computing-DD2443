@@ -12,9 +12,9 @@
 # Compile Java files before running
 javac *.java
 
-ALGO=LocalLog
+ALGO=Locked
 OPERATIONS=100000
-DISTRIBUTION=Normal
+DISTRIBUTION=Uniform
 
 for SPLIT in 1:1:8 1:1:0; do
     # for THREADS in 1 2 4 8 16 32 48 64 96; do

@@ -1,27 +1,23 @@
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicMarkableReference;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class LockFreeSkipListLocal<T extends Comparable<T>> implements LockFreeSet<T> {
+public class LockFreeSkipListLocked<T extends Comparable<T>> implements LockFreeSet<T> {
 	private static final int MAX_LEVEL = 16;
-	private static final int MAX_THREADS = 96;
+	private static final int MAX_LOG_ENTRIES = 1000000 * 48;
 
 	private final Node<T> head = new Node<T>();
 	private final Node<T> tail = new Node<T>();
 
-	private List<List<Log.Entry>> list = new ArrayList<>();
+	private final AtomicInteger logIndex = new AtomicInteger(0);
+	private final Log.Entry[] globalLog = new Log.Entry[MAX_LOG_ENTRIES];
 
-	public LockFreeSkipListLocal() {
+	public LockFreeSkipListLocked() {
 		for (int i = 0; i < head.next.length; i++) {
-			head.next[i] = new AtomicMarkableReference<LockFreeSkipListLocal.Node<T>>(tail, false);
+			head.next[i] = new AtomicMarkableReference<LockFreeSkipListLocked.Node<T>>(tail, false);
 		}
-
-		list = new ArrayList<>();
-        for (int i = 0; i < MAX_THREADS; i++) {
-            list.add(new ArrayList<>());
-        }
 	}
 
 	private static final class Node<T> {
@@ -85,13 +81,13 @@ public class LockFreeSkipListLocal<T extends Comparable<T>> implements LockFreeS
 				}
 				Node<T> pred = preds[bottomLevel];
 				Node<T> succ = succs[bottomLevel];
-
+	
 				if (!pred.next[bottomLevel].compareAndSet(succ, newNode, false, false)) {
 					continue;
 				}
 				timestamp[0] = System.nanoTime();
 				logOperation(threadId, Log.Method.ADD, x.hashCode(), true, timestamp[0]);
-
+	
 				for (int level = bottomLevel + 1; level <= topLevel; level++) {
 					while (true) {
 						pred = preds[level];
@@ -149,6 +145,7 @@ public class LockFreeSkipListLocal<T extends Comparable<T>> implements LockFreeS
 
 	public boolean contains(int threadId, T x) {
 		int bottomLevel = 0;
+		int key = x.hashCode();
 		boolean[] marked = { false };
 		Node<T> pred = head;
 		Node<T> curr = null;
@@ -171,10 +168,10 @@ public class LockFreeSkipListLocal<T extends Comparable<T>> implements LockFreeS
 				}
 			}
 		}
-
+	
 		boolean result = curr.value != null && x.compareTo(curr.value) == 0;
 		logOperation(threadId, Log.Method.CONTAINS, x.hashCode(), result, timestamp);
-
+	
 		return result;
 	}
 
@@ -215,27 +212,29 @@ public class LockFreeSkipListLocal<T extends Comparable<T>> implements LockFreeS
 	}
 
 	private void logOperation(int threadId, Log.Method method, int arg, boolean ret, long timestamp) {
-        Log.Entry entry = new Log.Entry(method, arg, ret, timestamp);
-
-		list.get(threadId).add(entry);
+		int index = logIndex.getAndIncrement();
+		globalLog[index] = new Log.Entry(method, arg, ret, timestamp);;
     }
 
 	public Log.Entry[] getLog() {
-		List<Log.Entry> log = new LinkedList<>();
-		for (List<Log.Entry> entries : list) {
-			log.addAll(entries);
+		ArrayList<Log.Entry> log = new ArrayList<>();
+		for (int i = 0; i < globalLog.length; i++) {
+			if (globalLog[i] != null) {
+				log.add(globalLog[i]);
+			}
 		}
-		return log.toArray(new Log.Entry[0]);
+		return log.toArray(new Log.Entry[log.size()]);
 	}
 
 	public void reset() {
 		for (int i = 0; i < head.next.length; i++) {
 			head.next[i] = new AtomicMarkableReference<>(tail, false);
 		}
-
-		list = new ArrayList<>();
-		for (int i = 0; i < MAX_THREADS; i++) {
-			list.add(new ArrayList<>());
+		
+		for (int i = 0; i < globalLog.length; i++) {
+			globalLog[i] = null;
 		}
+
+		logIndex.set(0);
 	}
 }

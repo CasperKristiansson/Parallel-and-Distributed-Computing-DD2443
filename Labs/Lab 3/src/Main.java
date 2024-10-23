@@ -7,7 +7,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		if (args.length == 0) {
-            args = new String[]{"8", "LocalLog", "Normal", "100000", "1:1:8", "100000", "2", "5"};
+            args = new String[]{"8", "Locked", "Normal", "100000", "1:1:8", "100000", "2", "5"};
             System.out.println("No arguments provided. Using default values: " + Arrays.toString(args));
         }
 		// Number of threads to use
@@ -84,7 +84,7 @@ public class Main {
 			case "Default":
 				return new LockFreeSkipList();
 			case "Locked":
-				// TODO: Add your own set
+				return new LockFreeSkipListLocked();
 			case "LocalLog":
 				return new LockFreeSkipListLocal();
 			case "GlobalLog":
