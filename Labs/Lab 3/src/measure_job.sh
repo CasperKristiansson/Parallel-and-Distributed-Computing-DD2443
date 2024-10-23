@@ -9,11 +9,16 @@
 
 module load java/17
 
+# Compile Java files before running
+javac *.java
+
 ALGO=Default
+OPERATIONS=100000
 
 for SPLIT in 1:1:8 1:1:0; do
-    for THREADS in 2 4 8 16 32 48 64 96; do
-        echo "java Main $THREADS $ALGO Normal 100000 $SPLIT 1000000 2 5"
-        java Main $THREADS $ALGO Normal 100000 $SPLIT 1000000 2 5
+    # for THREADS in 1 2 4 8 16 32 48 64 96; do
+    for THREADS in 1 2 4 8; do
+        echo "java Main $THREADS $ALGO Normal 1000 $SPLIT $OPERATIONS 2 5"
+        java Main $THREADS $ALGO Normal 1000 $SPLIT $OPERATIONS 2 5
     done
 done

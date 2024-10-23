@@ -160,7 +160,7 @@ public class LockFreeSkipList<T extends Comparable<T>> implements LockFreeSet<T>
 						return true;
 					} else if (marked[0]) {
 						try {
-							log.add(new Log.Entry(Log.Method.REMOVE_PLACE_HOLDER, x.hashCode(), false,  System.nanoTime()));
+							log.add(new Log.Entry(Log.Method.REMOVE_PLACE_HOLDER, x.hashCode(), false, System.nanoTime()));
 						} finally {
 							lock.unlock();
 						}

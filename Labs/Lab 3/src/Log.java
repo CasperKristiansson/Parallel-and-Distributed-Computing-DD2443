@@ -11,6 +11,8 @@ public class Log {
         HashSet<Integer> simulatedSet = new HashSet<>();
         int discrepancies = 0;
 
+        Arrays.sort(log, Comparator.comparingLong(e -> e.timestamp));
+
         long lastRemoveTimestamp = -1;
         for (int i = log.length - 1; i >= 0; i--) {
             Log.Entry entry = log[i];
@@ -19,6 +21,7 @@ public class Log {
             } else if (entry.method == Log.Method.REMOVE_PLACE_HOLDER) {
                 if (lastRemoveTimestamp != -1) {
                     entry.timestamp = lastRemoveTimestamp;
+                    entry.method = Log.Method.REMOVE;
                 }
             }
         }
@@ -36,6 +39,8 @@ public class Log {
                     break;
                 case CONTAINS:
                     expected = simulatedSet.contains(entry.arg);
+                    break;
+                default:
                     break;
             }
 
