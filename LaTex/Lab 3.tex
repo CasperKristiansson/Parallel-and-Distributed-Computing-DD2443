@@ -144,17 +144,17 @@ The increased execution time with more threads is especially pronounced in the n
 \subsection{Identify Linearization Points}
 
 \subsubsection{Explanation}
-In the \texttt{LockFreeSkipList}, linearization points are the moments when operations appear to take effect atomically. These points ensure correctness in a concurrent environment.
+The linearization points are the moments when operations appear to take effect atomically, ensuring the correctness of the concurrent data structure.
 
-For the \texttt{add()} method, the linearization point occurs when the \texttt{compareAndSet()} succeeds on the bottom-level reference, linking the new node into the list. If the node is already present, the linearization point is during the \texttt{find()} operation that detects the node’s presence.
+For the \texttt{add()} method, the linearization point remains when the \texttt{compareAndSet()} succeeds on the bottom-level reference, linking the new node into the list. However, now the exact timestamp for this operation is captured using \texttt{System.nanoTime()} immediately after a successful \texttt{compareAndSet()} to ensure accurate timing. If the node is already present, the linearization point is observed during the \texttt{find()} operation when it determines the node’s presence, and the timestamp is captured accordingly.
 
-In the \texttt{remove()} method, the linearization point of \texttt{remove()} occurs when a successful \texttt{compareAndSet()} marks the bottom-level node for removal (line 96 in the source code). For unsuccessful removals, the \texttt{find()} method is not the linearization point itself; rather, it helps in identifying the linearization point by determining whether a node has been logically removed (marked) in combination with other operations like \texttt{compareAndSet()}.
+In the \texttt{remove()} method, the linearization point occurs when the \texttt{compareAndSet()} marks the bottom-level node for removal. The timestamp is captured after the successful marking operation to accurately represent the time of the linearization point. For unsuccessful removals, the \texttt{find()} operation aids in detecting the correct linearization point by checking if a node has been logically removed (marked) and logging the timestamp for validation purposes.
 
-The \texttt{contains()} method’s linearization point happens when it checks the bottom-level list and observes whether the target node is unmarked. Success occurs when the target key is found, and failure when the key is missing.
-
+For the \texttt{contains()} method, the linearization point is identified when it checks the bottom-level list and determines if the target node is unmarked. If the target key is found, the success is marked with a timestamp at that point, and if the key is missing, the failure is timestamped accordingly.
 
 \subsubsection{Discussion}
-The linearization points for \texttt{add()}, \texttt{remove()}, and \texttt{contains()} are all based on atomic \texttt{compareAndSet()} operations, ensuring consistency across threads. In \texttt{add()} and \texttt{remove()}, it’s crucial to manage concurrent attempts to modify the same node, while \texttt{contains()} ensures it reflects the correct presence of the node. By placing linearization points at key \texttt{compareAndSet()} operations, we maintain the appearance of atomicity, which is vital for ensuring correct and efficient concurrent behavior.
+The linearization points for \texttt{add()}, \texttt{remove()}, and \texttt{contains()} are based on atomic \texttt{compareAndSet()} operations, ensuring consistency across threads. In this implementation, precise timing using \texttt{System.nanoTime()} is captured immediately after critical operations like successful \texttt{compareAndSet()} or after confirming the status through \texttt{find()} checks. This ensures that the linearization points are accurately represented in the logs, maintaining the appearance of atomicity, which is crucial for ensuring correct and efficient concurrent behavior.
+
 
 
 
@@ -175,40 +175,22 @@ The locked time sampling method employs a \texttt{ReentrantLock} to synchronize 
 
 \subsubsection{Results and Plots}
 
-The following plots show the performance of the locked time sampling method under different operation mixtures, including the results from Dardel experiments. The x-axis represents the number of threads, and the y-axis represents the measurement time in nanoseconds.
+The following plot shows the performance of the locked time sampling method under different operation mixtures. The x-axis represents the number of threads, and the y-axis represents the average measurement time in nanoseconds.
+
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{LaTex/images/Lab 3 2.3.2.1.png}
-    \caption{Measurement Time vs Threads (A.1)}
-    \label{fig:enter-label}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{LaTex/images/Lab 3 2.3.2.2.png}
-    \caption{Measurement Time vs Threads (A.2)}
-    \label{fig:enter-label}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{LaTex/images/Lab 3 2.3.2.3.png}
-    \caption{Measurement Time vs Threads (B.1)}
-    \label{fig:enter-label}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{LaTex/images/Lab 3 2.3.2.4.png}
-    \caption{Measurement Time vs Threads (B.2)}
-    \label{fig:enter-label}
+    \caption{Measurement Time vs Threads}
+    \label{fig:fig5}
 \end{figure}
 
 \subsubsection{Discussion}
-The locked time sampling method performed well in terms of accuracy, though it introduced minor latency due to the locking overhead. This was expected, as acquiring and releasing locks adds some delay. However, the use of locks ensured that time sampling and the linearization point were synchronized, resulting in minimal discrepancies.
+The locked time sampling method provided accurate time measurements across all tested thread counts, but with a slight increase in latency due to the use of locks. As expected, the synchronization overhead led to a gradual rise in measurement time as the number of threads increased, particularly for mixtures involving a higher proportion of write operations.
 
-In comparison to the local log method, the locked method provided more consistent and reliable measurements. The Dardel/PDC experiments further confirmed that the locked method maintained accuracy, even with higher thread counts, but at the cost of slightly increased measurement time. The results indicate that the method is more suited for scenarios where accuracy is critical, and synchronization costs are acceptable.
+Figure \ref{fig:fig5} illustrates that execution time scales with the number of threads. In the mixture involving 80\% contains operations (A.1 and B.1), the measurement time grows more significantly, particularly in scenarios with more threads. This indicates that as the number of operations increases, the contention overhead becomes more noticeable due to the locking mechanism.
+
+In comparison to previous methods, the locked time sampling still ensures that both the linearization point and time sampling are closely aligned, providing higher accuracy at the cost of slightly increased overhead. This method remains effective when accurate synchronization is essential, and the trade-off in performance is acceptable.
 
 \newpage
 \subsection{Lock-free Time Sampling with Local Log}
@@ -218,87 +200,80 @@ In the lock-free time sampling method with local logs, each thread maintains its
 
 \subsubsection{Results and Plots}
 
-The following plots show the performance of the lock-free time sampling method with local logs in different operation mixtures. The x-axis represents the number of threads, and the y-axis represents the measurement time in nanoseconds.
+The following plot shows the performance of the lock-free time sampling method with local logs in different operation mixtures. The x-axis represents the number of threads, and the y-axis represents the measurement time in nanoseconds.
 
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{LaTex/images/Lab 3 2.4.2.1.png}
-    \caption{Performance for LocalLog with Uniform Distribution - 1:1:8}
+    \caption{Performance for LocalLog}
     \label{fig:performance_a1}
 \end{figure}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\textwidth]{LaTex/images/Lab 3 2.4.2.2.png}
-    \caption{Performance for LocalLog with Uniform Distribution - 1:1:0}
-    \label{fig:performance_a2}
-\end{figure}
 
-On Dardel, we measured both the execution time and the accuracy of the logs, using the same experimental cases from Task 1.2. The following plots show the execution time for the lock-free time sampling method with local logs under normal distribution scenarios.
+On Dardel, we measured both the execution time and the accuracy of the logs, using the same experimental cases from Task 1.2. The following plot show the execution time for the lock-free time sampling method with local logs under normal distribution scenarios.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{LaTex/images/Lab 3 2.4.2.3.png}
-    \caption{Performance for LocalLog with Uniform Distribution - 1:1:8 on Dardel}
+    \caption{Performance for LocalLog - on Dardel}
     \label{fig:performance_dardel_1}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\textwidth]{LaTex/images/Lab 3 2.4.2.4.png}
-    \caption{Performance for LocalLog with Uniform Distribution - 1:1:0 on Dardel}
-    \label{fig:performance_dardel_2}
 \end{figure}
 
 
 \subsubsection{Discussion}
-The lock-free local logging approach reduces overhead by eliminating global locks, improving performance, particularly with fewer threads. For thread counts of 1, 2, or 4, no discrepancies were observed, as fewer threads reduce the chance of interleaving between time sampling and linearization points. As the thread count increased to 8, minor discrepancies were detected, likely due to increased concurrency and the absence of global synchronization. However, the discrepancy count remained low, indicating that the method provides sufficient accuracy for workloads with moderate contention.
+The lock-free local logging approach effectively reduces synchronization overhead by avoiding global locks, thus enhancing performance, especially with lower thread counts. As shown in the figures, the execution time scales predictably with the increase in the number of threads for both uniform and normal distributions. This demonstrates that the method remains efficient as concurrency increases, showing minimal overhead even at higher thread counts.
 
-The Dardel experiments confirmed the scalability of the lock-free local logging method across a higher number of threads. As seen in Figures \ref{fig:performance_dardel_1} and \ref{fig:performance_dardel_2}, the execution time increased linearly as the number of threads increased, while accuracy remained consistent. This reinforces the suitability of the method for high-concurrency workloads with moderate synchronization requirements, while ensuring minimal discrepancies.
+In scenarios with thread counts of 1, 2, or 4, discrepancies were minimal due to the reduced contention, allowing time sampling to closely align with the linearization points. With thread counts of 8 and higher, minor discrepancies were detected, likely resulting from the higher concurrency leading to slight interleaving between time sampling and the actual linearization point. Despite this, the discrepancy count remained manageable, indicating that the method retains sufficient accuracy for workloads with moderate contention.
+
+The Dardel experiments, which reached up to 48 threads, confirmed the scalability of the lock-free local logging method in environments with high concurrency. The results show that execution time generally increased with the number of threads, maintaining a consistent pattern across different distributions and mixtures. These findings validate the method’s effectiveness for large-scale, high-concurrency workloads, proving that it can handle increased contention while keeping synchronization overhead low. This makes it particularly suitable for scenarios where minimizing synchronization costs is critical.
+
 
 
 \newpage
 \subsection{Lock-free Time Sampling with Global Log}
 
 \subsubsection{Explanation}
-The global lock-free time sampling method utilizes a concurrent lock-free queue from \texttt{java.util.concurrent}. Each thread writes directly to a global log with non-blocking operations, minimizing synchronization overhead. After all threads complete, log entries are sorted and validated. While this method improves scalability, it may introduce minor discrepancies due to interleaving between time sampling and linearization points.
+The global lock-free time sampling method utilizes a concurrent lock-free queue from \texttt{java.util.concurrent}. Each thread writes directly to a global log with non-blocking operations, minimizing synchronization overhead. After all threads complete, log entries are sorted and validated. This method provides improved scalability due to reduced synchronization. However, it may introduce minor discrepancies due to the interleaving between time sampling and the linearization point, especially under high contention.
 
 \subsubsection{Results and Plots}
-The following plots show the performance of the global lock-free time sampling method under different operation mixtures, along with Dardel experiments. The x-axis represents the number of threads, and the y-axis represents the measurement time in nanoseconds.
+The following plots show the performance of the global lock-free time sampling method. The x-axis represents the number of threads, and the y-axis represents the measurement time in nanoseconds.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{LaTex/images/Lab 3 2.5.2.1.png}
-    \caption{Measurement Time vs Threads (A.1: 1:1:8)}
+    \caption{Performance for GlobalLog}
     \label{fig:global-log-1-1-8}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{LaTex/images/Lab 3 2.5.2.2.png}
-    \caption{Measurement Time vs Threads (A.2: 1:1:0)}
-    \label{fig:global-log-1-1-0}
+    \caption{Performance for GlobalLog - Extra Exercise}
+    \label{fig:global-log-1-1-8}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{LaTex/images/Lab 3 2.5.2.3.png}
-    \caption{Measurement Time vs Threads (B.1: 1:1:8) on Dardel}
+    \caption{Performance for GlobalLog - on Dardel}
     \label{fig:global-log-1-1-8}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{LaTex/images/Lab 3 2.5.2.4.png}
-    \caption{Measurement Time vs Threads (B.2: 1:1:0) on Dardel}
+    \caption{Performance for GlobalLog - Extra Exercise - on Dardel}
     \label{fig:global-log-1-1-0}
 \end{figure}
 
 \subsubsection{Discussion}
-The global log method demonstrated the best performance, particularly in scaling to higher thread counts, as seen in both the local and Dardel experiments. Minimal synchronization overhead resulted in a nearly linear increase in measurement time as the thread count increased.
+The global log method demonstrated efficient performance scaling, particularly when using the lock-free queue mechanism. As the thread count increased, the method maintained near-linear scalability, indicating that the reduction in synchronization overhead was effective. The data from both local and Dardel experiments show that the average measurement time increased predictably with the number of threads, validating the method’s suitability for scenarios involving high-concurrency workloads.
 
-While minor discrepancies were observed at 8 threads, these were caused by the interleaving of log entries rather than inaccuracies in \texttt{System.nanoTime()}. In the Dardel experiments, the method maintained high accuracy and efficiency, confirming its suitability for high-concurrency workloads where reducing synchronization is critical. The Dardel experiments also show that for larger thread counts, particularly with the B.1 and B.2 mixtures, the method continues to scale well, maintaining acceptable accuracy and performance even as the number of threads reaches up to 96.
+Minor discrepancies observed at higher thread counts (particularly with 8 and above) are attributed to the concurrent interleaving of log entries, rather than inaccuracies in the time sampling mechanism itself. This suggests that while the global log approach may introduce some potential for minor inconsistencies under heavy contention, the overall accuracy remains consistently high.
+
+The Dardel experiments, which included thread counts of up to 48, further confirm the scalability of this method in extreme scenarios. The observed trends validate that the global log method continues to perform well under larger thread counts, particularly with the mixtures B.1 (1:1:8) and B.2 (1:1:0). This underscores the method's capability to manage synchronization overhead effectively while maintaining reliable logging across highly concurrent operations, even as the workload scales dramatically.
+
 
 
 \newpage
