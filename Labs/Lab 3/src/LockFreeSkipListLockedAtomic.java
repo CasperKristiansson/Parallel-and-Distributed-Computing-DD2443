@@ -1,21 +1,21 @@
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicMarkableReference;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
-
-public class LockFreeSkipListLocked<T extends Comparable<T>> implements LockFreeSet<T> {
+public class LockFreeSkipListLockedAtomic<T extends Comparable<T>> implements LockFreeSet<T> {
 	private static final int MAX_LEVEL = 16;
 	private static final int MAX_LOG_ENTRIES = 1000000 * 48;
 
 	private final Node<T> head = new Node<T>();
 	private final Node<T> tail = new Node<T>();
 
-	private volatile int logIndex = 0;
+	private final AtomicInteger logIndex = new AtomicInteger(0);
 	private final Log.Entry[] globalLog = new Log.Entry[MAX_LOG_ENTRIES];
 
-	public LockFreeSkipListLocked() {
+	public LockFreeSkipListLockedAtomic() {
 		for (int i = 0; i < head.next.length; i++) {
-			head.next[i] = new AtomicMarkableReference<LockFreeSkipListLocked.Node<T>>(tail, false);
+			head.next[i] = new AtomicMarkableReference<LockFreeSkipListLockedAtomic.Node<T>>(tail, false);
 		}
 	}
 
@@ -212,26 +212,8 @@ public class LockFreeSkipListLocked<T extends Comparable<T>> implements LockFree
 		}
 	}
 
-	private boolean compareAndSetLogIndex(int expected, int update) {
-        synchronized (this) {
-            if (logIndex == expected) {
-                logIndex = update;
-                return true;
-            }
-            return false;
-        }
-    }
-
-    private int fetchAndIncrementLogIndex() {
-        int current;
-        do {
-            current = logIndex;
-        } while (!compareAndSetLogIndex(current, current + 1));
-        return current;
-    }
-
 	private void logOperation(int threadId, Log.Method method, int arg, boolean ret, long timestamp) {
-		int index = fetchAndIncrementLogIndex();
+		int index = logIndex.getAndIncrement();
 		globalLog[index] = new Log.Entry(method, arg, ret, timestamp);;
     }
 
@@ -254,6 +236,6 @@ public class LockFreeSkipListLocked<T extends Comparable<T>> implements LockFree
 			globalLog[i] = null;
 		}
 
-		logIndex = 0;
+		logIndex.set(0);
 	}
 }
