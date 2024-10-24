@@ -1,6 +1,7 @@
 {
     "cSpell.words": [
-        "Incrementer"
+        "Incrementer",
+        "linearization"
     ],
     "files.exclude": {
         "**/*.class": true

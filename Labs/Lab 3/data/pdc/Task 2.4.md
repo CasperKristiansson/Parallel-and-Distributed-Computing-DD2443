@@ -1,221 +1,223 @@
-# java Main 1 LocalLog Normal 100000 1:1:8 1000000 2 5
-Warmup time: 705479946
+# java Main 1 LocalLog Uniform 100000 1:1:8 100000 2 5
+Warmup time: 149845922
 Warmup discrepancy: 0
-Warmup time: 1262516442
+Warmup time: 144247478
 Warmup discrepancy: 0
-Measurement time: 704043294
+Measurement time: 134889757
 Measurement discrepancy: 0
-Measurement time: 743175997
+Measurement time: 135944712
 Measurement discrepancy: 0
-Measurement time: 791452077
+Measurement time: 114416705
 Measurement discrepancy: 0
-Measurement time: 719453090
+Measurement time: 114816100
 Measurement discrepancy: 0
-Measurement time: 842020945
+Measurement time: 123596880
 Measurement discrepancy: 0
 
-# java Main 2 LocalLog Normal 100000 1:1:8 1000000 2 5
-Warmup time: 966700360
+# java Main 2 LocalLog Uniform 100000 1:1:8 100000 2 5
+Warmup time: 276884236
 Warmup discrepancy: 0
-Warmup time: 969219032
+Warmup time: 221002668
 Warmup discrepancy: 0
-Measurement time: 1106607008
+Measurement time: 164085740
 Measurement discrepancy: 0
-Measurement time: 788752397
+Measurement time: 162446171
 Measurement discrepancy: 0
-Measurement time: 4977177562
+Measurement time: 153564140
 Measurement discrepancy: 0
-Measurement time: 831335863
+Measurement time: 172731153
 Measurement discrepancy: 0
-Measurement time: 843002762
+Measurement time: 166155022
 Measurement discrepancy: 0
 
-# java Main 4 LocalLog Normal 100000 1:1:8 1000000 2 5
-Warmup time: 1129411480
+# java Main 4 LocalLog Uniform 100000 1:1:8 100000 2 5
+Warmup time: 403601375
 Warmup discrepancy: 0
-Warmup time: 1231881176
+Warmup time: 256568061
+Warmup discrepancy: 0
+Measurement time: 198137323
+Measurement discrepancy: 0
+Measurement time: 179737388
+Measurement discrepancy: 0
+Measurement time: 783136334
+Measurement discrepancy: 0
+Measurement time: 186783138
+Measurement discrepancy: 0
+Measurement time: 200645885
+Measurement discrepancy: 0
+
+# java Main 8 LocalLog Uniform 100000 1:1:8 100000 2 5
+Warmup time: 447018212
+Warmup discrepancy: 0
+Warmup time: 310487791
+Warmup discrepancy: 0
+Measurement time: 893599375
+Measurement discrepancy: 0
+Measurement time: 257955463
+Measurement discrepancy: 0
+Measurement time: 245553449
+Measurement discrepancy: 0
+Measurement time: 252879748
+Measurement discrepancy: 0
+Measurement time: 248390752
+Measurement discrepancy: 0
+
+# java Main 16 LocalLog Uniform 100000 1:1:8 100000 2 5
+Warmup time: 641695081
+Warmup discrepancy: 0
+Warmup time: 579349391
+Warmup discrepancy: 0
+Measurement time: 325410587
+Measurement discrepancy: 1
+Measurement time: 1070798779
+Measurement discrepancy: 3
+Measurement time: 339576439
+Measurement discrepancy: 3
+Measurement time: 313597233
+Measurement discrepancy: 3
+Measurement time: 318399111
+Measurement discrepancy: 4
+
+# java Main 32 LocalLog Uniform 100000 1:1:8 100000 2 5
+Warmup time: 761269988
 Warmup discrepancy: 1
-Measurement time: 987200571
-Measurement discrepancy: 2
-Measurement time: 1441820552
-Measurement discrepancy: 3
-Measurement time: 10429652607
-Measurement discrepancy: 3
-Measurement time: 1139130648
-Measurement discrepancy: 3
-Measurement time: 1346886849
-Measurement discrepancy: 5
-
-# java Main 8 LocalLog Normal 100000 1:1:8 1000000 2 5
-Warmup time: 1828433560
-Warmup discrepancy: 3
-Warmup time: 2841177111
-Warmup discrepancy: 4
-Measurement time: 1877366919
-Measurement discrepancy: 7
-Measurement time: 1979948087
-Measurement discrepancy: 9
-Measurement time: 1931174767
-Measurement discrepancy: 12
-Measurement time: 2007526863
-Measurement discrepancy: 14
-Measurement time: 2371471214
-Measurement discrepancy: 18
-# java Main 16 LocalLog Normal 100000 1:1:8 1000000 2 5
-Warmup time: 1787266523
-Warmup discrepancy: 31
-Warmup time: 1893739323
-Warmup discrepancy: 51
-Measurement time: 2030601500
-Measurement discrepancy: 74
-Measurement time: 1992685140
-Measurement discrepancy: 89
-Measurement time: 1504952873
-Measurement discrepancy: 114
-Measurement time: 1609714706
-Measurement discrepancy: 130
-Measurement time: 1566468571
-Measurement discrepancy: 148
-
-# java Main 32 LocalLog Normal 100000 1:1:8 1000000 2 5
-Warmup time: 2770957569
-Warmup discrepancy: 73
-Warmup time: 2121378112
-Warmup discrepancy: 156
-Measurement time: 1842149195
-Measurement discrepancy: 246
-Measurement time: 1887068195
-Measurement discrepancy: 328
-Measurement time: 2005987259
-Measurement discrepancy: 410
-Measurement time: 2089727124
-Measurement discrepancy: 539
-Measurement time: 2212297131
-Measurement discrepancy: 646
-
-# java Main 1 LocalLog Normal 100000 1:1:0 1000000 2 5
-Warmup time: 1046134654
-Warmup discrepancy: 0
-Warmup time: 1019082431
-Warmup discrepancy: 0
-Measurement time: 1051277680
-Measurement discrepancy: 0
-Measurement time: 1043218098
-Measurement discrepancy: 0
-Measurement time: 1047077276
-Measurement discrepancy: 0
-Measurement time: 1035879691
-Measurement discrepancy: 0
-Measurement time: 1113712347
-Measurement discrepancy: 0
-# java Main 2 LocalLog Normal 100000 1:1:0 1000000 2 5
-Warmup time: 1422516448
-Warmup discrepancy: 0
-Warmup time: 1280545448
-Warmup discrepancy: 0
-Measurement time: 1587031865
-Measurement discrepancy: 0
-Measurement time: 1338813105
-Measurement discrepancy: 0
-Measurement time: 1553394274
-Measurement discrepancy: 0
-Measurement time: 1737946266
-Measurement discrepancy: 0
-Measurement time: 1295033248
-Measurement discrepancy: 0
-
-# java Main 4 LocalLog Normal 100000 1:1:0 1000000 2 5
-Warmup time: 1591288848
-Warmup discrepancy: 0
-Warmup time: 1984064326
-Warmup discrepancy: 0
-Measurement time: 4989645959
-Measurement discrepancy: 0
-Measurement time: 1964756237
-Measurement discrepancy: 0
-Measurement time: 2086921899
-Measurement discrepancy: 0
-Measurement time: 1974043381
-Measurement discrepancy: 0
-Measurement time: 1815196040
-Measurement discrepancy: 0
-
-# java Main 8 LocalLog Normal 100000 1:1:0 1000000 2 5
-Warmup time: 2727449639
-Warmup discrepancy: 0
-Warmup time: 2371763974
-Warmup discrepancy: 0
-Measurement time: 2051587211
-Measurement discrepancy: 2
-Measurement time: 2435035658
-Measurement discrepancy: 2
-Measurement time: 2426380681
-Measurement discrepancy: 2
-Measurement time: 2493586608
-Measurement discrepancy: 4
-Measurement time: 2375146647
-Measurement discrepancy: 4
-
-# java Main 16 LocalLog Normal 100000 1:1:0 1000000 2 5
-Warmup time: 3490319032
-Warmup discrepancy: 2
-Warmup time: 3042875374
-Warmup discrepancy: 2
-Measurement time: 2925550837
-Measurement discrepancy: 2
-Measurement time: 2936832363
-Measurement discrepancy: 6
-Measurement time: 2935853622
-Measurement discrepancy: 6
-Measurement time: 2902753713
-Measurement discrepancy: 6
-Measurement time: 2947677682
-Measurement discrepancy: 6
-
-# java Main 32 LocalLog Normal 100000 1:1:0 1000000 2 5
-Warmup time: 4261245669
-Warmup discrepancy: 2
-Warmup time: 3717053513
-Warmup discrepancy: 4
-Measurement time: 3710388945
-Measurement discrepancy: 6
-Measurement time: 3796849574
-Measurement discrepancy: 6
-Measurement time: 3944346968
-Measurement discrepancy: 6
-Measurement time: 3739642030
-Measurement discrepancy: 10
-Measurement time: 3711800117
-Measurement discrepancy: 12
-
-# java Main 48 LocalLog Normal 100000 1:1:0 1000000 2 5
-Warmup time: 4580722765
+Warmup time: 499917117
 Warmup discrepancy: 8
-Warmup time: 3972304342
-Warmup discrepancy: 16
-Measurement time: 4237700563
-Measurement discrepancy: 22
-Measurement time: 4051701181
+Measurement time: 584237382
+Measurement discrepancy: 9
+Measurement time: 372207971
+Measurement discrepancy: 9
+Measurement time: 8379205208
+Measurement discrepancy: 10
+Measurement time: 5597405572
+Measurement discrepancy: 21
+Measurement time: 375005370
 Measurement discrepancy: 24
-Measurement time: 3869170067
-Measurement discrepancy: 34
-Measurement time: 4281477086
-Measurement discrepancy: 40
-Measurement time: 4027240262
-Measurement discrepancy: 54
 
-# java Main 64 LocalLog Normal 100000 1:1:0 1000000 2 5
-Warmup time: 4789837914
-Warmup discrepancy: 14
-Warmup time: 4605410695
-Warmup discrepancy: 22
-Measurement time: 4654983977
-Measurement discrepancy: 26
-Measurement time: 4875596427
-Measurement discrepancy: 32
-Measurement time: 5136788421
-Measurement discrepancy: 46
-Measurement time: 5255552634
-Measurement discrepancy: 50
-Measurement time: 8657324054
-Measurement discrepancy: 60
+# java Main 48 LocalLog Uniform 100000 1:1:8 100000 2 5
+Warmup time: 859446565
+Warmup discrepancy: 23
+Warmup time: 1097319269
+Warmup discrepancy: 29
+Measurement time: 450061549
+Measurement discrepancy: 31
+Measurement time: 443829801
+Measurement discrepancy: 44
+Measurement time: 7027115673
+Measurement discrepancy: 58
+Measurement time: 425071954
+Measurement discrepancy: 63
+Measurement time: 504706412
+Measurement discrepancy: 73
+
+# java Main 1 LocalLog Uniform 100000 1:1:0 100000 2 5
+Warmup time: 240684716
+Warmup discrepancy: 0
+Warmup time: 222790459
+Warmup discrepancy: 0
+Measurement time: 222552680
+Measurement discrepancy: 0
+Measurement time: 195600219
+Measurement discrepancy: 0
+Measurement time: 193424606
+Measurement discrepancy: 0
+Measurement time: 334729396
+Measurement discrepancy: 0
+Measurement time: 182045505
+Measurement discrepancy: 0
+
+# java Main 2 LocalLog Uniform 100000 1:1:0 100000 2 5
+Warmup time: 349260516
+Warmup discrepancy: 0
+Warmup time: 293697350
+Warmup discrepancy: 0
+Measurement time: 260670667
+Measurement discrepancy: 0
+Measurement time: 322126922
+Measurement discrepancy: 0
+Measurement time: 262559387
+Measurement discrepancy: 0
+Measurement time: 299390051
+Measurement discrepancy: 0
+Measurement time: 268360453
+Measurement discrepancy: 0
+
+# java Main 4 LocalLog Uniform 100000 1:1:0 100000 2 5
+Warmup time: 466324561
+Warmup discrepancy: 0
+Warmup time: 434383821
+Warmup discrepancy: 0
+Measurement time: 399783664
+Measurement discrepancy: 0
+Measurement time: 376244596
+Measurement discrepancy: 0
+Measurement time: 380633472
+Measurement discrepancy: 1
+Measurement time: 381274344
+Measurement discrepancy: 2
+Measurement time: 1288113785
+Measurement discrepancy: 2
+
+# java Main 8 LocalLog Uniform 100000 1:1:0 100000 2 5
+Warmup time: 633495698
+Warmup discrepancy: 0
+Warmup time: 479160867
+Warmup discrepancy: 1
+Measurement time: 421987427
+Measurement discrepancy: 2
+Measurement time: 508598104
+Measurement discrepancy: 2
+Measurement time: 423965025
+Measurement discrepancy: 4
+Measurement time: 448379207
+Measurement discrepancy: 4
+Measurement time: 480576000
+Measurement discrepancy: 4
+
+# java Main 16 LocalLog Uniform 100000 1:1:0 100000 2 5
+Warmup time: 740168867
+Warmup discrepancy: 6
+Warmup time: 589328594
+Warmup discrepancy: 8
+Measurement time: 520636871
+Measurement discrepancy: 14
+Measurement time: 515056135
+Measurement discrepancy: 16
+Measurement time: 541393665
+Measurement discrepancy: 16
+Measurement time: 531589413
+Measurement discrepancy: 22
+Measurement time: 512713762
+Measurement discrepancy: 24
+
+# java Main 32 LocalLog Uniform 100000 1:1:0 100000 2 5
+Warmup time: 1067937932
+Warmup discrepancy: 12
+Warmup time: 748233133
+Warmup discrepancy: 37
+Measurement time: 578650352
+Measurement discrepancy: 53
+Measurement time: 656261976
+Measurement discrepancy: 66
+Measurement time: 648963976
+Measurement discrepancy: 74
+Measurement time: 673308706
+Measurement discrepancy: 88
+Measurement time: 572869669
+Measurement discrepancy: 100
+
+# java Main 48 LocalLog Uniform 100000 1:1:0 100000 2 5
+Warmup time: 1104763964
+Warmup discrepancy: 34
+Warmup time: 3411585117
+Warmup discrepancy: 70
+Measurement time: 1109216298
+Measurement discrepancy: 104
+Measurement time: 679046918
+Measurement discrepancy: 131
+Measurement time: 659463009
+Measurement discrepancy: 172
+Measurement time: 8780047666
+Measurement discrepancy: 214
+Measurement time: 13608810702
+Measurement discrepancy: 260
