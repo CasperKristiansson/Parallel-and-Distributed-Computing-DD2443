@@ -45,7 +45,7 @@
 \textbf{Explain why the fine-grained list’s add() method is linearizable.}
 
 \subsection*{Answer}
-The fine-grained list add() method is linearizable due to the reason that it ensures that each operation it påerformis is atomic. It makes sure that at each step in the method, the list is maintained in the correct structure all the time.
+The fine-grained list add() method is linearizable due to the reason that it ensures that each operation it performs is atomic. It makes sure that at each step in the method, the list is maintained in the correct structure all the time.
 
 It does this by making sure that the specific different nodes in the operation require locks one by one and making sure that no other thread will be modifying the current node or any other action that might not make the method atomic. The important takeaway is that the locks are acquired in a way that prevents both a deadlock but also the correct locks by locking the correct nodes in the correct order.
 
