@@ -71,11 +71,12 @@ public class LockFreeSkipListLocal<T extends Comparable<T>> implements LockFreeS
 		int bottomLevel = 0;
 		Node<T>[] preds = (Node<T>[]) new Node[MAX_LEVEL + 1];
 		Node<T>[] succs = (Node<T>[]) new Node[MAX_LEVEL + 1];
-		long[] timestamp = new long[1];
+		long[] findTimeStamp = new long[1];
+		long timestamp = 0;
 		while (true) {
-			boolean found = find(x, preds, succs, timestamp);
+			boolean found = find(x, preds, succs, findTimeStamp);
 			if (found) {
-				logOperation(threadId, Log.Method.ADD, x.hashCode(), false, timestamp[0]);
+				logOperation(threadId, Log.Method.ADD, x.hashCode(), false, findTimeStamp[0]);
 				return false;
 			} else {
 				Node<T> newNode = new Node(x, topLevel);
@@ -89,8 +90,8 @@ public class LockFreeSkipListLocal<T extends Comparable<T>> implements LockFreeS
 				if (!pred.next[bottomLevel].compareAndSet(succ, newNode, false, false)) {
 					continue;
 				}
-				timestamp[0] = System.nanoTime();
-				logOperation(threadId, Log.Method.ADD, x.hashCode(), true, timestamp[0]);
+				timestamp = System.nanoTime();
+				logOperation(threadId, Log.Method.ADD, x.hashCode(), true, timestamp);
 
 				for (int level = bottomLevel + 1; level <= topLevel; level++) {
 					while (true) {
@@ -98,7 +99,7 @@ public class LockFreeSkipListLocal<T extends Comparable<T>> implements LockFreeS
 						succ = succs[level];
 						if (pred.next[level].compareAndSet(succ, newNode, false, false))
 							break;
-						find(x, preds, succs, timestamp);
+						find(x, preds, succs, findTimeStamp);
 					}
 				}
 				return true;
@@ -113,6 +114,7 @@ public class LockFreeSkipListLocal<T extends Comparable<T>> implements LockFreeS
 		Node<T>[] succs = (Node<T>[]) new Node[MAX_LEVEL + 1];
 		Node<T> succ;
 		long[] findTimeStamp = new long[1];
+		long timestamp = 0;
 		while (true) {
 			boolean found = find(x, preds, succs, findTimeStamp);
 			if (!found) {
@@ -132,10 +134,10 @@ public class LockFreeSkipListLocal<T extends Comparable<T>> implements LockFreeS
 				succ = nodeToRemove.next[bottomLevel].get(marked);
 				while (true) {
 					boolean iMarkedIt = nodeToRemove.next[bottomLevel].compareAndSet(succ, succ, false, true);
-					findTimeStamp[0] = System.nanoTime();
+					timestamp = System.nanoTime();
 					succ = succs[bottomLevel].next[bottomLevel].get(marked);
 					if (iMarkedIt) {
-						logOperation(threadId, Log.Method.REMOVE, x.hashCode(), true, findTimeStamp[0]);
+						logOperation(threadId, Log.Method.REMOVE, x.hashCode(), true, timestamp);
 						find(x, preds, succs, findTimeStamp);
 						return true;
 					} else if (marked[0]) {

@@ -180,7 +180,6 @@ public class LockFreeSkipList<T extends Comparable<T>> implements LockFreeSet<T>
 		Node<T> succ = null;
 		long timestamp = 0;
 		boolean result;
-
 		for (int level = MAX_LEVEL; level >= bottomLevel; level--) {
 			curr = pred.next[level].getReference();
 			while (true) {

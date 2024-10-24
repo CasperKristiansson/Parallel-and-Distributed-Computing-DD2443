@@ -1,13 +1,10 @@
 import java.util.Arrays;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Random;
 
 public class Main {
 
 	public static void main(String[] args) {
 		if (args.length == 0) {
-            args = new String[]{"8", "Locked", "Normal", "100000", "1:1:8", "100000", "2", "5"};
+            args = new String[]{"8", "GlobalLog", "Normal", "100000", "1:1:8", "100000", "2", "5"};
             System.out.println("No arguments provided. Using default values: " + Arrays.toString(args));
         }
 		// Number of threads to use
@@ -79,6 +76,7 @@ public class Main {
 		}
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static LockFreeSet<Integer> getSet(String name, int threads) {
 		switch (name) {
 			case "Default":
